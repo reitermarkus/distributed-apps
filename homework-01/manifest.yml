@@ -1,0 +1,12 @@
+# https://github.com/apache/openwhisk-wskdeploy/blob/master/specification/html/spec_actions.md#actions
+
+packages:
+  default:
+    actions:
+      nqueens:
+        function: actions/nqueens.js
+        runtime: nodejs:12
+        web: true
+        limits:
+          timeout: 120_000
+          memorySize: 128
