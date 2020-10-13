@@ -23,12 +23,21 @@ public class App {
 
     long start = System.nanoTime();
 
+    long resultTotal = 0;
+
     for (var i = 0; i < k; i++) {
       try {
+        long resultStart = System.nanoTime();
+
+
         JsonObject londonResult = gateway.invokeFunction(url, input);
         var result = londonResult.get("solutions").getAsNumber();
 
-        System.out.println("Result " + i + ": " + result);
+        long resultEnd = System.nanoTime();
+        long resultElapsed = resultEnd - resultStart;
+        resultTotal += resultElapsed;
+
+        System.out.println("Result " + i + ": " + result + " (" + resultElapsed + " ns)");
       } catch (IOException e) {
         e.printStackTrace();
         return 1;
@@ -38,7 +47,7 @@ public class App {
     long finish = System.nanoTime();
     long timeElapsed = finish - start;
 
-    System.out.println("Took " + timeElapsed + " ns");
+    System.out.println("Took " + timeElapsed + " ns (average " + resultTotal / k + " ns)");
 
     return 0;
   }
