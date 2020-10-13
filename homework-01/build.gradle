@@ -22,3 +22,8 @@ dependencies {
 application {
   mainClass = 'homework01.App'
 }
+
+compileJava {
+  options.encoding = 'UTF-8'
+  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}

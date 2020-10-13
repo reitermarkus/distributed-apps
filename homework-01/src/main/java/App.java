@@ -15,7 +15,7 @@ public class App {
 
     System.out.println("Running " + url + " with N=" + boardSize + " and k=" + k + " …");
 
-    Map<String, Object> input = new HashMap();
+    var input = new HashMap<String, Object>();
     input.put("board_size", boardSize);
 
     var credentialsPath = Paths.get(".").toAbsolutePath().normalize().resolve("credentials.properties");
