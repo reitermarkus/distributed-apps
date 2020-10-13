@@ -2,6 +2,14 @@
 
 set -euo pipefail
 
+run() {
+  local url="${1}"
+  local n="${2}"
+  local k="${3}"
+
+  env NQUEENS_FUNCTION_URL="${url}" gradle run --args="${n} ${k}"
+}
+
 deploy() {
   local region="${1}"
   local namespace="${2}"
@@ -16,11 +24,11 @@ deploy() {
   ibmcloud fn undeploy --manifest manifest.yml
   ibmcloud fn   deploy --manifest manifest.yml
 
-  board_size=4
-  echo "Testing function with board size ${board_size} …"
+  local url=
   url="$(ibmcloud fn action get nqueens --url | tail -n 1)"
-  echo "${url}"
-  curl --silent --fail "${url}.json?board_size=${board_size}" | jq .solutions
+
+  run "${url}" 8 2
+  run "${url}" 8 10
 }
 
 deploy eu-gb london

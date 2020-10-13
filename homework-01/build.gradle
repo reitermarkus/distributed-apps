@@ -1,5 +1,5 @@
 plugins {
-id 'java'
+  id 'java'
   id 'application'
 }
 
@@ -7,7 +7,7 @@ group 'homework01'
 version '1.0-SNAPSHOT'
 
 repositories {
-  mavenCentral()
+  jcenter()
 }
 
 dependencies {
@@ -22,4 +22,3 @@ dependencies {
 application {
   mainClass = 'homework01.App'
 }
-
