@@ -25,11 +25,11 @@ times, some of the latency overhead seems to be reduced.
 
 | Region   |  k | N | Memory |  Total Time |        Time |
 |----------|----|---|--------|-------------|-------------|
-| `eu-gb`  |  2 | 8 |   1024 |  6561338211 |  3278665165 |
-| `eu-gb`  | 10 | 8 |   1024 | 29641387456 |  2963687380 |
-| `jp-tok` |  2 | 8 |   1024 |  7287299359 |  3641724295 |
-| `jp-tok` | 10 | 8 |   1024 | 34209182520 |  3420504571 |
+| `eu-gb`  |  2 | 8 |   2048 |  6561338211 |  3278665165 |
+| `eu-gb`  | 10 | 8 |   2048 | 29641387456 |  2963687380 |
+| `jp-tok` |  2 | 8 |   2048 |  7287299359 |  3641724295 |
+| `jp-tok` | 10 | 8 |   2048 | 34209182520 |  3420504571 |
 
-The result when using 1024 MB of memory don't differ substantionally from the
+The result when using 2048 MB of memory don't differ substantionally from the
 ones using only 128 MB, indicating that the problem is compute bound and not
 memory bound.
