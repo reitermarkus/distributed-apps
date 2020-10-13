@@ -19,6 +19,7 @@ deploy() {
   board_size=4
   echo "Testing function with board size ${board_size} …"
   url="$(ibmcloud fn action get nqueens --url | tail -n 1)"
+  echo "${url}"
   curl --silent --fail "${url}.json?board_size=${board_size}" | jq .solutions
 }
 
