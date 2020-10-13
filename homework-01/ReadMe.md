@@ -10,6 +10,11 @@
 
 Deploy and run example function calls using `./deploy.sh`.
 
+Try in a browser (takes approx. 5 seconds):
+
+- https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/nqueens.json?board_size=8
+- https://jp-tok.functions.appdomain.cloud/api/v1/web/9e571da3-c444-42ab-93bc-8174744a38d5/default/nqueens.json?board_size=8
+
 ## Results
 
 | Region   |  k | N | Memory |  Total Time |       Time |
