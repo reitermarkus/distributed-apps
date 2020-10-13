@@ -3,7 +3,7 @@
 ## Dependencies
 
 - `ibmcloud`
-- `java`
+- `java` (>= 14)
 - `gradle`
 
 ## Running
