@@ -10,11 +10,6 @@ import jFaaS.*;
 import com.google.gson.JsonObject;
 
 public class App {
-  Number nqueensMonolith(Gateway gateway, String url, Map<String, Object> input) throws IOException {
-    JsonObject londonResult = gateway.invokeFunction(url, input);
-    return londonResult.get("solutions").getAsNumber();
-  }
-
   public int run(int k, int boardSize) {
     var url = System.getenv("NQUEENS_FUNCTION_URL");
 
@@ -30,7 +25,10 @@ public class App {
 
     for (var i = 0; i < k; i++) {
       try {
-        System.out.println("Result " + i + ": " + nqueensMonolith(gateway, url, input));
+        JsonObject londonResult = gateway.invokeFunction(url, input);
+        var result = londonResult.get("solutions").getAsNumber();
+
+        System.out.println("Result " + i + ": " + result);
       } catch (IOException e) {
         e.printStackTrace();
         return 1;
