@@ -29,7 +29,6 @@ public class App {
       try {
         long resultStart = System.nanoTime();
 
-
         JsonObject londonResult = gateway.invokeFunction(url, input);
         var result = londonResult.get("solutions").getAsNumber();
 
@@ -52,22 +51,18 @@ public class App {
     return 0;
   }
 
-  public static void main(String[] argv) {
+  public static void main(String[] args) {
     var app = new App();
 
+    var it = Arrays.stream(args).iterator();
 
-    var args = new ArrayList<>(Arrays.asList(argv));
-
-    var it = Arrays.stream(argv).iterator();
-
-    var n = Optional.ofNullable(it.hasNext() ? it.next() : null).map(Integer::parseInt);
-    if (n.isEmpty()) {
+    var n = it.hasNext() ? Integer.parseInt(it.next()) : null;
+    if (n == null) {
       System.err.println("Missing argument: n");
       System.exit(1);
     }
     var k = it.hasNext() ? Integer.parseInt(it.next()) : 1;
 
-
-    System.exit(app.run(k, n.get()));
+    System.exit(app.run(k, n));
   }
 }
