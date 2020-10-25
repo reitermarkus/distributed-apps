@@ -1,0 +1,10 @@
+packages:
+  default:
+    actions:
+      nqueens:
+        function: build/manual
+        runtime: nodejs:12
+        web: true
+        limits:
+          timeout: 120_000
+          memorySize: 128
