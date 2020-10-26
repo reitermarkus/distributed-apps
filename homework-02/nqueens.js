@@ -3,7 +3,6 @@
 const external = require('./external')
 
 exports.fraction = async function(ev, res) {
-
   const num_queens = parseInt(ev.params.num_queens)
   const from = parseInt(ev.params.from)
   const to = parseInt(ev.params.to)

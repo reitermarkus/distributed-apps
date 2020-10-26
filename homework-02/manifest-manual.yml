@@ -1,8 +1,8 @@
 packages:
   default:
     actions:
-      nqueens:
-        function: build/manual
+      nqueens-manual:
+        function: build/manual/nqueens
         runtime: nodejs:12
         web: true
         limits:

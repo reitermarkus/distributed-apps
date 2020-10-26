@@ -1,7 +1,7 @@
 packages:
   default:
     actions:
-      nqueens:
+      nqueens-x2faas:
         function: build/ibm/nqueens
         runtime: nodejs:12
         web: true

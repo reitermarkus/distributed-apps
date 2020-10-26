@@ -7,12 +7,12 @@ set -x
 npm install
 
 # Manual FaaSification
-npx ncc build manual.js --out build/manual
+npx ncc build manual.js --out build/manual/nqueens --minify
 
 # Automatic FaaSification
-npx x2faas --fpath nqueens.js --linenum 10 --outpath build --provider ibm
-npx x2faas --fpath nqueens.js --linenum 10 --outpath build --provider amazon
-npx x2faas --fpath nqueens.js --linenum 10 --outpath build --provider google
+npx x2faas --fpath nqueens.js --linenum 9 --outpath build --provider ibm
+npx x2faas --fpath nqueens.js --linenum 9 --outpath build --provider amazon
+npx x2faas --fpath nqueens.js --linenum 9 --outpath build --provider google
 
 pushd build/amazon/nqueens
 zip -r ../nqueens.zip .
@@ -24,16 +24,21 @@ popd
 #   --handler index.handler \
 #   --role arn:aws:iam::860352936990:role/lambda \
 #   --runtime nodejs12.x
-#
-# exit
-
 
 ibmcloud target -r eu-gb
 ibmcloud fn namespace target london
 
-ibmcloud fn undeploy --manifest manifest-manual.yml
-ibmcloud fn   deploy --manifest manifest-manual.yml
+run() {
+  echo "Deploying function nqueens-${1} …"
+  ibmcloud fn undeploy --manifest "manifest-${1}.yml"
+  ibmcloud fn   deploy --manifest "manifest-${1}.yml"
 
-url="$(ibmcloud fn action get nqueens --url | tail -n 1)"
+  echo "Running nqueens-${1}"
+  local url
+  url="$(ibmcloud fn action get "nqueens-${1}" --url | tail -n 1)"
+  time curl -sSfL "${url}.json?num_queens=8&from=0&to=16777216"
+  echo
+}
 
-curl -sSfL "${url}.json?num_queens=8&from=0&to=16777216"
+run manual
+run x2faas
