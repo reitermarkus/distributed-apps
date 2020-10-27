@@ -1,0 +1,29 @@
+plugins {
+  id 'java'
+  id 'application'
+}
+
+group 'homework01'
+version '1.0-SNAPSHOT'
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  implementation('jFaaS:jFaaS') {
+    version {
+      branch = 'master'
+    }
+  }
+  implementation 'com.google.code.gson:gson:2.8.5'
+}
+
+application {
+  mainClass = 'homework01.App'
+}
+
+compileJava {
+  options.encoding = 'UTF-8'
+  options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+}

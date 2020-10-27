@@ -2,8 +2,6 @@
 
 set -euo pipefail
 
-set -x
-
 npm install
 
 # Manual FaaSification
@@ -36,8 +34,11 @@ run() {
   echo "Running nqueens-${1}"
   local url
   url="$(ibmcloud fn action get "nqueens-${1}" --url | tail -n 1)"
-  time curl -sSfL "${url}.json?num_queens=8&from=0&to=16777216"
-  echo
+
+  # time curl -sSfL "${url}.json?num_queens=8&from=0&to=16777216"
+  # echo
+
+  env NQUEENS_FUNCTION_URL="${url}" gradle run --args="8 0 16777216"
 }
 
 run manual

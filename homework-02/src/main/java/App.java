@@ -1,0 +1,80 @@
+package homework01;
+
+import java.io.*;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.*;
+
+import jFaaS.*;
+
+import com.google.gson.JsonObject;
+
+public class App {
+  public int run(int k, int boardSize, int from, int to) {
+    var url = System.getenv("NQUEENS_FUNCTION_URL");
+
+    System.out.println("Running " + url + " with N=" + boardSize + " and k=" + k + " …");
+
+    var input = new HashMap<String, Object>();
+    input.put("num_queens", boardSize);
+    input.put("from", from);
+    input.put("to", to);
+
+    var credentialsPath = Paths.get(".").toAbsolutePath().normalize().resolve("credentials.properties");
+    var gateway = new Gateway(credentialsPath.toString());
+
+    long start = System.nanoTime();
+
+    long resultTotal = 0;
+
+    for (var i = 0; i < k; i++) {
+      try {
+        long resultStart = System.nanoTime();
+
+        JsonObject londonResult = gateway.invokeFunction(url, input);
+        var result = londonResult.get("solutions").getAsNumber();
+
+        long resultEnd = System.nanoTime();
+        long resultElapsed = resultEnd - resultStart;
+        resultTotal += resultElapsed;
+
+        System.out.println("Result " + i + ": " + result + " (" + resultElapsed + " ns)");
+      } catch (IOException e) {
+        e.printStackTrace();
+        return 1;
+      }
+    }
+
+    long finish = System.nanoTime();
+    long timeElapsed = finish - start;
+
+    System.out.println("Took " + timeElapsed + " ns (average " + resultTotal / k + " ns)");
+
+    return 0;
+  }
+
+  public static void main(String[] args) {
+    var app = new App();
+
+    var it = Arrays.stream(args).iterator();
+
+    var n = it.hasNext() ? Integer.parseInt(it.next()) : null;
+    if (n == null) {
+      System.err.println("Missing argument: n");
+      System.exit(1);
+    }
+    var from = it.hasNext() ? Integer.parseInt(it.next()) : null;
+    if (from == null) {
+      System.err.println("Missing argument: n");
+      System.exit(1);
+    }
+    var to = it.hasNext() ? Integer.parseInt(it.next()) : null;
+    if (to == null) {
+      System.err.println("Missing argument: n");
+      System.exit(1);
+    }
+    var k = it.hasNext() ? Integer.parseInt(it.next()) : 1;
+
+    System.exit(app.run(k, n, from, to));
+  }
+}
