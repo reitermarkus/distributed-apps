@@ -6,5 +6,5 @@ packages:
         runtime: nodejs:12
         web: true
         limits:
-          timeout: 120_000
+          timeout: 300_000
           memorySize: 128
