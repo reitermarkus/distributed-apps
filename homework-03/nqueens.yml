@@ -1,0 +1,97 @@
+---
+name: nqueens
+dataIns:
+  - name: N
+    type: number
+    source: N
+  - name: k
+    type: number
+    source: k
+workflowBody:
+  - function:
+      name: workers
+      type: workersType
+      dataIns:
+        - name: N
+          type: number
+          source: nqueens/N
+        - name: k
+          type: number
+          source: nqueens/k
+      dataOuts:
+        - name: workers
+          type: number
+        - name: placements_from
+          type: collection
+        - name: placements_per_function
+          type: number
+      properties:
+        - name: resource
+          value: js:https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/workers.json
+  - parallelFor:
+      name: parallelFor
+      dataIns:
+        - name: N
+          type: number
+          source: nqueens/N
+          constraints:
+            - name: distribution
+              value: REPLICATE(*)
+        - name: placements_from
+          type: collection
+          source: workers/placements_from
+          constraints:
+            - name: distribution
+              value: BLOCK(1)
+        - name: placements_per_function
+          type: number
+          source: workers/placements_per_function
+          constraints:
+            - name: distribution
+              value: REPLICATE(*)
+      loopCounter:
+        type: number
+        from: 0
+        to: workers/workers
+        step: 1
+      loopBody:
+        - function:
+            name: fraction
+            type: fractionType
+            dataIns:
+              - name: N
+                type: number
+                source: parallelFor/N
+              - name: placements_per_function
+                type: number
+                source: parallelFor/placements_per_function
+              - name: from
+                type: number
+                source: parallelFor/placements_from
+            dataOuts:
+              - name: solutions
+                type: number
+            properties:
+              - name: resource
+                value: js:https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/fraction.json
+      dataOuts:
+        - name: solutions
+          type: collection
+          source: fraction/solutions
+  - function:
+      name: reduction
+      type: reductionType
+      dataIns:
+        - name: solutions
+          type: collection
+          source: parallelFor/solutions
+      dataOuts:
+        - name: solutions
+          type: number
+      properties:
+        - name: resource
+          value: ruby:https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/reduction.json
+dataOuts:
+  - name: solutions
+    type: number
+    source: reduction/solutions

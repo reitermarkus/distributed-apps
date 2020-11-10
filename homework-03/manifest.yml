@@ -1,0 +1,24 @@
+packages:
+  default:
+    actions:
+      workers:
+        function: workers.js
+        runtime: nodejs:12
+        web: true
+        limits:
+          timeout: 300_000
+          memorySize: 128
+      fraction:
+        function: build/fraction
+        runtime: nodejs:12
+        web: true
+        limits:
+          timeout: 300_000
+          memorySize: 128
+      reduction:
+        function: reduction.rb
+        runtime: ruby:2.5
+        web: true
+        limits:
+          timeout: 300_000
+          memorySize: 128
