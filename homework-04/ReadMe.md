@@ -22,12 +22,12 @@ Deploy and run the functions using `./deploy.sh`.
 | `en-de`, `eu-gb`, `jp-tok`  | FC     | 9 | 3 (27 workers) | 128 MB |  20004 ms |
 | `en-de`, `eu-gb`, `jp-tok`  | FC     | 9 | 4 (81 workers) | 128 MB |  19701 ms |
 
-Looking at the results, we can see that we can more than double the response
-time when splitting the processing across multiple function calls using a
+Looking at the results, we can see that we can more than cut the response time
+in half when splitting the processing across multiple function calls using a
 function choreography.
 
-When splitting calls across regions, we can again almost double the response
-time compared to a single region. This is probable due to more containers
+When splitting calls across regions, we can again almost cut the response time in
+half compared to a single region. This is probable due to more containers
 being spun than with a single region.
 
 However, this only scales up to a certain extent on IBM Cloud. Using 27 workers
