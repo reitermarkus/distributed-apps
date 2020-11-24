@@ -1,0 +1,220 @@
+---
+name: "nqueens"
+dataIns:
+- name: "N"
+  type: "number"
+  source: "N"
+- name: "k"
+  type: "number"
+  source: "k"
+workflowBody:
+- function:
+    name: "workers"
+    type: "workersType"
+    dataIns:
+    - name: "N"
+      type: "number"
+      source: "nqueens/N"
+    - name: "k"
+      type: "number"
+      source: "nqueens/k"
+    dataOuts:
+    - name: "workers"
+      type: "number"
+    - name: "placements_from_first"
+      type: "collection"
+    - name: "placements_per_function"
+      type: "number"
+    - name: "placements_from_second"
+      type: "collection"
+    - name: "placements_from_third"
+      type: "collection"
+    - name: "workers_per_loop"
+      type: "collection"
+    properties:
+    - name: "resource"
+      value: "js:https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/workers.json"
+- parallel:
+    name: "parallelRegion"
+    parallelBody:
+    - section:
+      - parallelFor:
+          name: "parallelForFrankfurt"
+          dataIns:
+          - name: "N"
+            type: "number"
+            source: "nqueens/N"
+            constraints:
+            - name: "distribution"
+              value: "REPLICATE(*)"
+          - name: "placements_from"
+            type: "collection"
+            source: "workers/placements_from_first"
+            constraints:
+            - name: "distribution"
+              value: "BLOCK(1)"
+          - name: "placements_per_function"
+            type: "number"
+            source: "workers/placements_per_function"
+            constraints:
+            - name: "distribution"
+              value: "REPLICATE(*)"
+          loopCounter:
+            type: "number"
+            to: "workers/workers_per_loop"
+            step: "1"
+          loopBody:
+          - function:
+              name: "fraction"
+              type: "fractionType"
+              dataIns:
+              - name: "N"
+                type: "number"
+                source: "parallelFor/N"
+              - name: "placements_per_function"
+                type: "number"
+                source: "parallelFor/placements_per_function"
+              - name: "from"
+                type: "number"
+                source: "parallelFor/placements_from"
+              dataOuts:
+              - name: "solutions"
+                type: "number"
+              properties:
+              - name: "resource"
+                value: "js:https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/fraction.json"
+          dataOuts:
+          - name: "solutions"
+            type: "collection"
+            source: "fraction/solutions"
+    - section:
+      - parallelFor:
+          name: "parallelForLondon"
+          dataIns:
+          - name: "N"
+            type: "number"
+            source: "nqueens/N"
+            constraints:
+            - name: "distribution"
+              value: "REPLICATE(*)"
+          - name: "placements_from"
+            type: "collection"
+            source: "workers/placements_from_second"
+            constraints:
+            - name: "distribution"
+              value: "BLOCK(1)"
+          - name: "placements_per_function"
+            type: "number"
+            source: "workers/placements_per_function"
+            constraints:
+            - name: "distribution"
+              value: "REPLICATE(*)"
+          loopCounter:
+            type: "number"
+            to: "workers/workers_per_loop"
+            step: "1"
+          loopBody:
+          - function:
+              name: "fraction"
+              type: "fractionType"
+              dataIns:
+              - name: "N"
+                type: "number"
+                source: "parallelFor/N"
+              - name: "placements_per_function"
+                type: "number"
+                source: "parallelFor/placements_per_function"
+              - name: "from"
+                type: "number"
+                source: "parallelFor/placements_from"
+              dataOuts:
+              - name: "solutions"
+                type: "number"
+              properties:
+              - name: "resource"
+                value: "js:https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/fraction.json"
+          dataOuts:
+          - name: "solutions"
+            type: "collection"
+            source: "fraction/solutions"
+    - section:
+      - parallelFor:
+          name: "parallelForTokyo"
+          dataIns:
+          - name: "N"
+            type: "number"
+            source: "nqueens/N"
+            constraints:
+            - name: "distribution"
+              value: "REPLICATE(*)"
+          - name: "placements_from"
+            type: "collection"
+            source: "workers/placements_from_third"
+            constraints:
+            - name: "distribution"
+              value: "BLOCK(1)"
+          - name: "placements_per_function"
+            type: "number"
+            source: "workers/placements_per_function"
+            constraints:
+            - name: "distribution"
+              value: "REPLICATE(*)"
+          loopCounter:
+            type: "number"
+            to: "workers/workers_per_loop"
+            step: "1"
+          loopBody:
+          - function:
+              name: "fraction"
+              type: "fractionType"
+              dataIns:
+              - name: "N"
+                type: "number"
+                source: "parallelFor/N"
+              - name: "placements_per_function"
+                type: "number"
+                source: "parallelFor/placements_per_function"
+              - name: "from"
+                type: "number"
+                source: "parallelFor/placements_from"
+              dataOuts:
+              - name: "solutions"
+                type: "number"
+              properties:
+              - name: "resource"
+                value: "js:https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/fraction.json"
+          dataOuts:
+          - name: "solutions"
+            type: "collection"
+            source: "fraction/solutions"
+    dataOuts:
+    - name: "solutionsFrankfurt"
+      type: "collection"
+      source: "parallelForFrankfurt/solutions"
+    - name: "solutionsLondon"
+      type: "collection"
+      source: "parallelForLondon/solutions"
+    - name: "solutionsTokyo"
+      type: "collection"
+      source: "parallelForTokyo/solutions"
+- function:
+    name: "reduction"
+    type: "reductionType"
+    dataIns:
+    - name: "solutionsFrankfurt"
+      type: "collection"
+      source: "parallelRegion/solutionsFrankfurt"
+    - name: "solutionsLondon"
+      source: "parallelRegion/solutionsLondon"
+    - name: "solutionsTokyo"
+      source: "parallelRegion/solutionsTokyo"
+    dataOuts:
+    - name: "solutions"
+      type: "number"
+    properties:
+    - name: "resource"
+      value: "ruby:https://eu-gb.functions.appdomain.cloud/api/v1/web/62ea098b-618c-465f-8bed-aa659df82e70/default/reduction.json"
+dataOuts:
+- name: "solutions"
+  type: "number"
+  source: "reduction/solutions"
