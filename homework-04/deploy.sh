@@ -19,9 +19,9 @@ function deploy() {
 
   echo "Running function choreography …"
 
-  workers_url="$(ibmcloud fn action get workers --url | tail -n 1)"
-  fraction_url="$(ibmcloud fn action get fraction --url | tail -n 1)"
-  reduction_url="$(ibmcloud fn action get reduction --url | tail -n 1)"
+  workers_url="$(ibmcloud fn action get workers-hw4 --url | tail -n 1)"
+  fraction_url="$(ibmcloud fn action get fraction-hw4 --url | tail -n 1)"
+  reduction_url="$(ibmcloud fn action get reduction-hw4 --url | tail -n 1)"
 
   echo "${namespace} workers: ${workers_url}"
   echo "${namespace} fraction: ${fraction_url}"
