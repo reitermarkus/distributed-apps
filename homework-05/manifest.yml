@@ -1,0 +1,31 @@
+packages:
+  default:
+    actions:
+      workers-hw5:
+        function: workers.js
+        runtime: nodejs:12
+        web: true
+        limits:
+          timeout: 300_000
+          memorySize: 128
+      fraction-ft-hw5:
+        function: build/fraction-ft
+        runtime: nodejs:12
+        web: true
+        limits:
+          timeout: 300_000
+          memorySize: 128
+      fraction-hw5:
+        function: build/fraction
+        runtime: nodejs:12
+        web: true
+        limits:
+          timeout: 300_000
+          memorySize: 128
+      reduction-hw5:
+        function: reduction.rb
+        runtime: ruby:2.5
+        web: true
+        limits:
+          timeout: 300_000
+          memorySize: 128
