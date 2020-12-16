@@ -1,0 +1,100 @@
+---
+name: "stock_fc"
+dataIns:
+- name: "ticker_symbols"
+  type: "collection"
+  source: "ticker_symbols"
+- name: "folder"
+  type: "string"
+  source: "folder"
+workflowBody:
+- function:
+    name: "fetch_prices"
+    type: "fetch_prices_type"
+    dataIns:
+    - name: "ticker_symbols"
+      type: "collection"
+      source: "stock_fc/ticker_symbols"
+      passing: true
+    - name: "folder"
+      type: "string"
+      source: "stock_fc/folder"
+      passing: true
+    dataOuts:
+    - name: "prices"
+      type: "collection"
+    - name: "tickerNumber"
+      type: "number"
+    properties:
+    - name: "resource"
+      value: "resource_link"
+- parallelFor:
+    name: "parallel_ticker"
+    dataIns:
+    - name: "ticker_symbols"
+      type: "string"
+      source: "fetch_prices/ticker_symbols"
+      constraints:
+      - name: "distribution"
+        value: "BLOCK(1)"
+    - name: "prices"
+      type: "collection"
+      source: "fetch_prices/prices"
+      constraints:
+      - name: "distribution"
+        value: "BLOCK(1)"
+    loopCounter:
+      from: "0"
+      to: "fetch_prices/tickerNumber"
+      step: "1"
+    loopBody:
+    - function:
+        name: "forecast"
+        type: "forecastType"
+        dataIns:
+        - name: "prices"
+          type: "string"
+          source: "parallel_ticker/prices"
+        - name: "ticker"
+          type: "string"
+          source: "parallel_ticker/ticker_symbols"
+        dataOuts:
+        - name: "predicted_prices"
+          type: "string"
+        properties:
+        - name: "resource"
+          value: "resource_link"
+    - function:
+        name: "process_result"
+        type: "process_result_type"
+        dataIns:
+        - name: "predicted_prices"
+          type: "string"
+          source: "forecast/predicted_prices"
+        dataOuts:
+        - name: "predicted_prices_processed"
+          type: "string"
+        properties:
+        - name: "resource"
+          value: "resource_link"
+    dataOuts:
+    - name: "predicted_prices_processed"
+      type: "collection"
+      source: "process_result"
+- function:
+    name: "create_chart"
+    type: "create_chart_type"
+    dataIns:
+    - name: "predicted_prices_processed"
+      type: "collection"
+      source: "parallel_ticker/predicted_prices_processed"
+    dataOuts:
+    - name: "charts"
+      type: "collection"
+    properties:
+    - name: "resource"
+      value: "resource_link"
+dataOuts:
+- name: "charts"
+  type: "collection"
+  source: "create_chart/charts"

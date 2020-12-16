@@ -1,0 +1,15 @@
+[package]
+name = "fetch-prices"
+version = "0.1.0"
+authors = ["Markus Reiter <me@reitermark.us>"]
+edition = "2018"
+
+[[bin]]
+name = "fetch_prices"
+path = "src/fetch_prices.rs"
+
+[[bin]]
+name = "forecast"
+path = "src/forecast.rs"
+
+[dependencies]
