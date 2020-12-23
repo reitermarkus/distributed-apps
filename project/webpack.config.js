@@ -1,6 +1,5 @@
 const path = require('path')
 const webpack = require('webpack')
-const nodeExternals = require('webpack-node-externals')
 
 const dotenv = require('dotenv').config({
   path: path.join(__dirname, '.env')
@@ -11,9 +10,6 @@ module.exports = (env, argv) => {
     mode: argv.mode || 'development',
     target: 'node',
     devtool: 'inline-source-map',
-    externals: [nodeExternals({
-      allowlist: ['alphavantage']
-    })],
     entry: {
       fetch_prices: path.resolve(__dirname, 'src/fetch_prices.ts'),
     },
