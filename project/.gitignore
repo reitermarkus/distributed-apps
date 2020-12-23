@@ -3,3 +3,8 @@ target
 .terraform*
 terraform.tfstate*
 terraform.tfvars
+
+node_modules
+dist
+
+.env
