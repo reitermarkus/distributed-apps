@@ -11,7 +11,7 @@ module.exports = (env, argv) => {
     target: 'node',
     devtool: 'inline-source-map',
     entry: {
-      fetch_prices: path.resolve(__dirname, 'src/fetch_prices.ts'),
+      fetch_prices: path.resolve(__dirname, path.join('src', 'fetch_prices.ts')),
     },
     output: {
       filename: '[name].bundle.js',
