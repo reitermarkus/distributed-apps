@@ -13,6 +13,11 @@ name = "forecast"
 path = "src/forecast.rs"
 
 [dependencies]
-serde = "1.0"
-serde_json = "1.0"
 anyhow = "1.0"
+dotenv = "0.15.0"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+reqwest = { version = "0.10", features = ["json"] }
+tokio = { version = "0.2", features = ["full"] }
+serde-aux = "2.0.0"
