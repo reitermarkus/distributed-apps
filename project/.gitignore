@@ -6,5 +6,6 @@ terraform.tfvars
 
 node_modules
 dist
+files
 
 .env
