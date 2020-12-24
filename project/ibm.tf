@@ -15,6 +15,36 @@ provider "ibm" {
   region           = "us-east"
 }
 
+data "archive_file" "fetch_prices_js" {
+  type        = "zip"
+  output_path = "${path.module}/files/fetch_prices_js.zip"
+
+  source {
+    content  = file("dist/fetch_prices.bundle.js")
+    filename = "index.js"
+  }
+
+  source {
+    content  = file(".env")
+    filename = ".env"
+  }
+}
+
+data "archive_file" "fetch_prices_rs" {
+  type        = "zip"
+  output_path = "${path.module}/files/fetch_prices_rs.zip"
+
+  source {
+    content  = file("target/x86_64-unknown-linux-musl/release/fetch_prices")
+    filename = "exec"
+  }
+
+  source {
+    content  = file(".env")
+    filename = ".env"
+  }
+}
+
 resource "ibm_function_action" "fetch_prices_rs" {
   name      = "fetch_prices_rs"
   namespace = var.ibmcloud_washington_namespace
@@ -22,7 +52,7 @@ resource "ibm_function_action" "fetch_prices_rs" {
   exec {
     kind  = "Blackbox"
     image = "openwhisk/dockerskeleton"
-    code  = filebase64("target/fetch_prices.zip")
+    code  = filebase64("files/fetch_prices_rs.zip")
   }
 
   limits {
@@ -37,7 +67,7 @@ resource "ibm_function_action" "fetch_prices_js" {
 
   exec {
     kind = "nodejs:12"
-    code = file("dist/fetch_prices.bundle.js")
+    code = filebase64("files/fetch_prices_js.zip")
   }
 
   limits {
