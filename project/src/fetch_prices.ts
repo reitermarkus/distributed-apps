@@ -4,3 +4,5 @@ async function main(params: object) {
   return await alpha.data.daily('msft')
 }
 
+exports.main = main
+

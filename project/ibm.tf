@@ -23,11 +23,6 @@ data "archive_file" "fetch_prices_js" {
     content  = file("dist/fetch_prices.bundle.js")
     filename = "index.js"
   }
-
-  source {
-    content  = file(".env")
-    filename = ".env"
-  }
 }
 
 data "archive_file" "fetch_prices_rs" {
