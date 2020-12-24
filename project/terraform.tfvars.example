@@ -1,1 +1,2 @@
 ibmcloud_api_key = "<key>"
+ibmcloud_washington_namespace = "<namespace>"
