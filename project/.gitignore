@@ -9,3 +9,4 @@ dist
 files
 
 .env
+ibmcloud_api_key.txt

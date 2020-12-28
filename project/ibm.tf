@@ -1,5 +1,9 @@
 variable "ibmcloud_api_key" {}
 variable "ibmcloud_washington_namespace" {}
+variable "alphavantage_api_key" {}
+variable "ibm_object_storage_endpoint_url" {}
+variable "ibm_object_storage_api_key" {}
+variable "ibm_object_storage_bucket_name" {}
 
 terraform {
   required_providers {
@@ -15,54 +19,42 @@ provider "ibm" {
   region           = "us-east"
 }
 
-data "archive_file" "fetch_prices_js" {
-  type        = "zip"
-  output_path = "${path.module}/files/fetch_prices_js.zip"
-
-  source {
-    content  = file("dist/fetch_prices.bundle.js")
-    filename = "index.js"
-  }
+resource "local_file" "dotenv" {
+  sensitive_content = templatefile("${path.module}/.env.example", {
+    alphavantage_api_key            = var.alphavantage_api_key,
+    ibm_object_storage_endpoint_url = var.ibm_object_storage_endpoint_url,
+    ibm_object_storage_api_key      = var.ibm_object_storage_api_key,
+    ibm_object_storage_bucket_name  = var.ibm_object_storage_bucket_name,
+  })
+  filename = "${path.module}/.env"
 }
 
-data "archive_file" "fetch_prices_rs" {
-  type        = "zip"
-  output_path = "${path.module}/files/fetch_prices_rs.zip"
-
-  source {
-    content  = file("target/x86_64-unknown-linux-musl/release/fetch_prices")
-    filename = "exec"
-  }
-
-  source {
-    content  = file(".env")
-    filename = ".env"
-  }
+resource "local_file" "ibmcloud_api_key" {
+  sensitive_content = var.ibmcloud_api_key
+  filename = "${path.module}/ibmcloud_api_key.txt"
 }
 
-resource "ibm_function_action" "fetch_prices_rs" {
-  name      = "fetch_prices_rs"
-  namespace = var.ibmcloud_washington_namespace
+resource "null_resource" "fetch_prices_rs" {
+  depends_on = [local_file.dotenv, local_file.ibmcloud_api_key]
 
-  exec {
-    kind  = "Blackbox"
-    image = "openwhisk/dockerskeleton"
-    code  = filebase64("files/fetch_prices_rs.zip")
+  triggers = {
+    executable = filesha256("target/fetch_prices.zip")
   }
 
-  limits {
-    timeout = 10000
-    memory  = 128
+  provisioner "local-exec" {
+    command = "'${path.module}/deploy_rust_function.sh' fetch_prices ${var.ibmcloud_washington_namespace}"
   }
 }
 
 resource "ibm_function_action" "fetch_prices_js" {
+  depends_on = [local_file.dotenv]
+
   name      = "fetch_prices_js"
   namespace = var.ibmcloud_washington_namespace
 
   exec {
     kind = "nodejs:12"
-    code = filebase64("files/fetch_prices_js.zip")
+    code = file("dist/fetch_prices.bundle.js")
   }
 
   limits {
