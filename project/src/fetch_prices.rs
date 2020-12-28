@@ -3,7 +3,7 @@ use std::env;
 use std::io;
 
 use anyhow::Result;
-use dotenv::dotenv;
+use dotenv_codegen::dotenv;
 use serde_derive::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use serde_aux::field_attributes::deserialize_number_from_string;
@@ -54,10 +54,10 @@ async fn get_bearer_token(client: &reqwest::Client, api_key: &str) -> Result<Str
 }
 
 async fn fetch_prices(input: Value) -> Result<()> {
-  let alphavantage_api_key = env::var("ALPHAVANTAGE_API_KEY").expect("ALPHAVANTAGE_API_KEY is not set");
-  let object_storage_endpoint_url = env::var("IBM_OBJECT_STORAGE_ENDPOINT_URL").expect("IBM_OBJECT_STORAGE_ENDPOINT_URL is not set");
-  let object_storage_bucket_name = env::var("IBM_OBJECT_STORAGE_BUCKET_NAME").expect("IBM_OBJECT_STORAGE_BUCKET_NAME is not set");
-  let object_storage_api_key = env::var("IBM_OBJECT_STORAGE_API_KEY").expect("IBM_OBJECT_STORAGE_ENDPOINT_URL is not set");
+  let alphavantage_api_key = dotenv!("ALPHAVANTAGE_API_KEY");
+  let object_storage_endpoint_url = dotenv!("IBM_OBJECT_STORAGE_ENDPOINT_URL");
+  let object_storage_bucket_name = dotenv!("IBM_OBJECT_STORAGE_BUCKET_NAME");
+  let object_storage_api_key = dotenv!("IBM_OBJECT_STORAGE_API_KEY");
 
   let ticker_symbol: String = serde_json::from_value(input)?;
 
@@ -89,8 +89,6 @@ async fn fetch_prices(input: Value) -> Result<()> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-  dotenv().ok();
-
   let input: Value = serde_json::from_str(&env::args().nth(1).expect("no argument specified"))?;
 
   let result = match fetch_prices(input).await {

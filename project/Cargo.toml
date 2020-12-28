@@ -21,3 +21,4 @@ serde_json = "1.0"
 reqwest = { version = "0.10", features = ["json"] }
 tokio = { version = "0.2", features = ["full"] }
 serde-aux = "2.0.0"
+dotenv_codegen = "0.15.0"
