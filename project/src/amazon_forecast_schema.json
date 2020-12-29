@@ -1,0 +1,44 @@
+{
+  "Attributes": [
+    {
+      "AttributeName": "item_id",
+      "AttributeType": "string"
+    },
+    {
+      "AttributeName": "timestamp",
+      "AttributeType": "timestamp"
+    },
+    {
+      "AttributeName": "price_open",
+      "AttributeType": "float"
+    },
+    {
+      "AttributeName": "price_high",
+      "AttributeType": "float"
+    },
+    {
+      "AttributeName": "price_low",
+      "AttributeType": "float"
+    },
+    {
+      "AttributeName": "price_close",
+      "AttributeType": "float"
+    },
+    {
+      "AttributeName": "price_adjusted_close",
+      "AttributeType": "float"
+    },
+    {
+      "AttributeName": "volume",
+      "AttributeType": "integer"
+    },
+    {
+      "AttributeName": "dividend_amount",
+      "AttributeType": "float"
+    },
+    {
+      "AttributeName": "split_coefficient",
+      "AttributeType": "float"
+    }
+  ]
+}

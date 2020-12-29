@@ -17,7 +17,10 @@ anyhow = "1.0"
 dotenv = "0.15.0"
 serde = "1.0"
 serde_json = "1.0"
-reqwest = { version = "0.10", features = ["json"] }
 tokio = { version = "0.2", features = ["full"] }
 serde-aux = "2.0.0"
 dotenv_codegen = "0.15.0"
+rust-s3 = "0.26.4"
+rusoto_forecast = "0.45.0"
+rusoto_core = "0.45.0"
+rusoto_credential = "0.45.0"

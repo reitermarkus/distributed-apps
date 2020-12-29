@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 use std::env;
 use std::io;
+use std::str;
 
-use anyhow::Result;
+use anyhow::{Error, Result};
 use dotenv_codegen::dotenv;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -49,15 +50,12 @@ async fn fetch_prices(params: Value) -> Result<Output> {
     .await?;
 
   let object_key = format!("{}.json", symbol);
-  let object_url = ibm::object_url(&object_key);
 
-  let bearer_token = ibm::get_bearer_token(&client).await?;
-  client.put(&object_url)
-    .bearer_auth(&bearer_token)
-    .header("Content-Type", "application/json")
-    .json(&response.time_series)
-    .send()
-    .await?;
+  let bucket = ibm::bucket().await?;
+  let (response, response_code) = bucket.put_object_with_content_type(&object_key, &serde_json::to_vec(&response.time_series)?, "application/json").await?;
+  if !matches!(response_code, 200..=299) {
+    return Err(Error::msg(String::from_utf8(response)?))
+  }
 
   Ok(Output { object_key, symbol })
 }
