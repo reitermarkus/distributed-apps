@@ -1,8 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
-
-pushd "$(dirname "${0}")"
 
 name="${1}"
 namespace="${2}"
