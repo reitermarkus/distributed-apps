@@ -19,6 +19,7 @@
     "webpack-node-externals": "^2.5.2"
   },
   "dependencies": {
-    "alphavantage": "^2.2.0"
+    "alphavantage": "^2.2.0",
+    "node-fetch": "^2.6.1"
   }
 }
