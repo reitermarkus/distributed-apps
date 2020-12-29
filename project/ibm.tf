@@ -57,6 +57,25 @@ resource "null_resource" "fetch_prices_rs" {
   }
 }
 
+data "external" "forecast_rs_zip" {
+  depends_on = [local_file.dotenv]
+
+  program = ["${path.module}/build_rust_function.sh", "forecast"]
+}
+
+resource "null_resource" "forecast_rs" {
+  depends_on = [local_file.ibmcloud_api_key]
+
+  triggers = {
+    id = data.external.forecast_rs_zip.result.id
+    executable = filesha256(data.external.forecast_rs_zip.result.filename)
+  }
+
+  provisioner "local-exec" {
+    command = "'${path.module}/deploy_rust_function.sh' forecast_rs '${var.ibmcloud_washington_namespace}' '${data.external.forecast_rs_zip.result.filename}'"
+  }
+}
+
 resource "ibm_function_action" "fetch_prices_js" {
   depends_on = [local_file.dotenv]
 
