@@ -9,7 +9,7 @@ terraform {
   required_providers {
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = "~> 1.12.0"
+      version = "~> 1.18.0"
     }
   }
 }
@@ -34,15 +34,26 @@ resource "local_file" "ibmcloud_api_key" {
   filename = "${path.module}/ibmcloud_api_key.txt"
 }
 
+resource "random_id" "rust_functions" {
+  byte_length = 8
+}
+
+data "external" "fetch_prices_rs_zip" {
+  depends_on = [local_file.dotenv]
+
+  program = ["${path.module}/build_rust_function.sh", "fetch_prices"]
+}
+
 resource "null_resource" "fetch_prices_rs" {
-  depends_on = [local_file.dotenv, local_file.ibmcloud_api_key]
+  depends_on = [local_file.ibmcloud_api_key]
 
   triggers = {
-    executable = filesha256("target/fetch_prices.zip")
+    id = data.external.fetch_prices_rs_zip.result.id
+    executable = filesha256(data.external.fetch_prices_rs_zip.result.filename)
   }
 
   provisioner "local-exec" {
-    command = "'${path.module}/deploy_rust_function.sh' fetch_prices ${var.ibmcloud_washington_namespace}"
+    command = "'${path.module}/deploy_rust_function.sh' fetch_prices_rs '${var.ibmcloud_washington_namespace}' '${data.external.fetch_prices_rs_zip.result.filename}'"
   }
 }
 
