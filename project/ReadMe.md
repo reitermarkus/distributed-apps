@@ -7,3 +7,7 @@ https://github.com/sashkoristov/DAppMaster-2020W/blob/master/project/project.md#
 
 https://www.alphavantage.co
 
+
+# Forecast Tutorial
+
+https://github.com/aws-samples/amazon-forecast-samples/tree/master/notebooks/basic/Tutorial
