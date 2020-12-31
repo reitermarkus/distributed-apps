@@ -547,6 +547,7 @@ dependencies = [
  "rusoto_core",
  "rusoto_credential",
  "rusoto_forecast",
+ "rusoto_forecastquery",
  "rust-s3",
  "serde",
  "serde-aux",
@@ -1515,6 +1516,20 @@ name = "rusoto_forecast"
 version = "0.45.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "20ce0bb47a10c198fd8e4e79e12196bed45e0d9f8a4b6828aacf636a4beb640e"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "futures",
+ "rusoto_core",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "rusoto_forecastquery"
+version = "0.45.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef45e97d42ef0345984fff00cc7f221a1e8643d2788e3e8a3e08cb17c963fc5e"
 dependencies = [
  "async-trait",
  "bytes",
