@@ -17,6 +17,7 @@ use serde_json::{json, Value};
 use tokio::time::delay_for as sleep;
 
 mod ibm;
+mod macros;
 mod stock_data;
 use stock_data::TimeSeriesDailyAdjusted;
 
@@ -35,8 +36,7 @@ struct Input {
 #[derive(Debug, Serialize)]
 struct Output {
   symbol: String,
-  timestamp: String,
-  price_high: f64,
+  object_key: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -52,16 +52,6 @@ struct Row {
   // volume: usize,
   // dividend_amount: f32,
   // split_coefficient: f32,
-}
-
-macro_rules! try_response {
-  ($response:expr) => {{
-    let (response, response_code) = $response;
-    match response_code {
-      200..=299 => response,
-      _ => return Err(Error::msg(String::from_utf8(response)?)),
-    }
-  }}
 }
 
 macro_rules! wait_until_active {
@@ -331,13 +321,14 @@ async fn forecast(params: Value) -> Result<Output> {
   let mut predictions = import_result?;
   dbg!(&predictions);
 
+  let object_key = format!("{}.forecast.json", symbol);
+  let response = try_response!(bucket.put_object_with_content_type(&object_key, &serde_json::to_vec(&predictions)?, "application/json").await?);
+  let response = String::from_utf8(response)?;
+  dbg!(&response);
+
   let prediction = predictions.remove("p50").unwrap().pop().unwrap();
 
-  Ok(Output {
-    symbol,
-    timestamp: prediction.timestamp.unwrap(),
-    price_high: prediction.value.unwrap(),
-  })
+  Ok(Output { symbol, object_key })
 }
 
 #[tokio::main]

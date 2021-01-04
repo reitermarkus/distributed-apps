@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
 mod ibm;
+mod macros;
 mod stock_data;
 use stock_data::TimeSeriesDailyAdjusted;
 
