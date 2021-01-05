@@ -123,3 +123,20 @@ resource "ibm_function_action" "fetch_prices_js" {
   }
 }
 
+resource "ibm_function_action" "create_chart_js" {
+  depends_on = [local_file.dotenv]
+
+  name      = "create_chart_js"
+  namespace = var.ibmcloud_washington_namespace
+
+  exec {
+    kind = "nodejs:12"
+    code = file("dist/create-chart.bundle.js")
+  }
+
+  limits {
+    timeout = 10000
+    memory  = 128
+  }
+}
+

@@ -24,6 +24,7 @@ module.exports = (env, argv) => {
     devtool: 'inline-source-map',
     entry: {
       fetch_prices: path.resolve(__dirname, path.join('src', 'fetch_prices.ts')),
+      'create-chart': path.resolve(__dirname, path.join('src', 'create-chart.ts')),
     },
     output: {
       filename: '[name].bundle.js',
