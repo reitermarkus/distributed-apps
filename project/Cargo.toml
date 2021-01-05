@@ -12,6 +12,10 @@ path = "src/fetch_prices.rs"
 name = "forecast"
 path = "src/forecast.rs"
 
+[[bin]]
+name = "create_chart"
+path = "src/create_chart.rs"
+
 [dependencies]
 anyhow = "1.0"
 dotenv = "0.15.0"
