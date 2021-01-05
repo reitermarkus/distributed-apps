@@ -19,7 +19,9 @@
     "webpack-node-externals": "^2.5.2"
   },
   "dependencies": {
+    "@auth0/s3": "^1.0.0",
     "alphavantage": "^2.2.0",
+    "csv-writer": "^1.6.0",
     "node-fetch": "^2.6.1"
   }
 }

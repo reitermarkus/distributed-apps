@@ -1,21 +1,12 @@
 const alpha = require('alphavantage')({ key: process.env.ALPHA_KEY })
 import fetch from 'node-fetch'
-
-interface Params {
-  symbol: string;
-}
+import {Params, assert } from './shared.ts'
 
 interface Token {
   access_token: string,
   refresh_token_expiration: number,
   scope: string,
   token_type: string,
-}
-
-function assert(value: string): asserts value {
-  if (!value) {
-    throw new Error('A symbol must be specified')
-  }
 }
 
 const renameObjectKeys = (obj: object) => (
