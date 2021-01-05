@@ -24,6 +24,7 @@ use stock_data::TimeSeriesDailyAdjusted;
 const AWS_ACCESS_KEY_ID: &'static str = dotenv!("AWS_ACCESS_KEY_ID");
 const AWS_SECRET_ACCESS_KEY: &'static str = dotenv!("AWS_SECRET_ACCESS_KEY");
 const AWS_SESSION_TOKEN: &'static str = dotenv!("AWS_SESSION_TOKEN");
+const AWS_FORECAST_GROUP: &'static str = dotenv!("AWS_FORECAST_GROUP");
 const AWS_FORECAST_BUCKET: &'static str = dotenv!("AWS_FORECAST_BUCKET");
 const AWS_FORECAST_ROLE: &'static str = dotenv!("AWS_FORECAST_ROLE");
 
@@ -169,7 +170,7 @@ async fn forecast(params: Value) -> Result<Output> {
   //   }
   // }
 
-  let dataset_group_arn = "arn:aws:forecast:us-east-1:860352936990:dataset-group/stock_forecast_group";
+  let dataset_group_arn = AWS_FORECAST_GROUP;
 
   let group = forecast_client.describe_dataset_group(DescribeDatasetGroupRequest {
     dataset_group_arn: dataset_group_arn.into(),

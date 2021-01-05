@@ -1,6 +1,7 @@
 variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
 variable "aws_session_token" {}
+variable "aws_forecast_group" {}
 variable "aws_forecast_role" {}
 variable "ibmcloud_api_key" {}
 variable "ibmcloud_washington_namespace" {}
@@ -48,6 +49,7 @@ resource "local_file" "dotenv" {
     aws_secret_access_key                = var.aws_secret_access_key,
     aws_session_token                    = var.aws_session_token,
     aws_forecast_bucket                  = aws_s3_bucket.stock_forecast_data.bucket,
+    aws_forecast_group                   = var.aws_forecast_group,
     aws_forecast_role                    = var.aws_forecast_role,
     alphavantage_api_key                 = var.alphavantage_api_key,
     ibm_object_storage_endpoint_url      = var.ibm_object_storage_endpoint_url,

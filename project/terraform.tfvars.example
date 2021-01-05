@@ -1,6 +1,7 @@
 aws_access_key_id                    = "<key>"
 aws_secret_access_key                = "<key>"
 aws_session_token                    = "<token>"
+aws_forecast_group                   = "<group>"
 aws_forecast_role                    = "<role>"
 ibmcloud_api_key                     = "<key>"
 ibmcloud_washington_namespace        = "<namespace>"
