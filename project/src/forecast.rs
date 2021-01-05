@@ -22,7 +22,7 @@ mod stock_data;
 use stock_data::TimeSeriesDailyAdjusted;
 
 const AWS_ACCESS_KEY_ID: &'static str = dotenv!("AWS_ACCESS_KEY_ID");
-const AWS_SECRET_KEY: &'static str = dotenv!("AWS_SECRET_KEY");
+const AWS_SECRET_ACCESS_KEY: &'static str = dotenv!("AWS_SECRET_ACCESS_KEY");
 const AWS_SESSION_TOKEN: &'static str = dotenv!("AWS_SESSION_TOKEN");
 const AWS_FORECAST_BUCKET: &'static str = dotenv!("AWS_FORECAST_BUCKET");
 const AWS_FORECAST_ROLE: &'static str = dotenv!("AWS_FORECAST_ROLE");
@@ -133,14 +133,14 @@ async fn forecast(params: Value) -> Result<Output> {
 
   let bucket_name = AWS_FORECAST_BUCKET;
   let region = s3::Region::UsEast1;
-  let credentials = Credentials::new(Some(AWS_ACCESS_KEY_ID), Some(AWS_SECRET_KEY), None, Some(AWS_SESSION_TOKEN), None)?;
+  let credentials = Credentials::new(Some(AWS_ACCESS_KEY_ID), Some(AWS_SECRET_ACCESS_KEY), None, Some(AWS_SESSION_TOKEN), None)?;
   let forecast_bucket = Bucket::new(bucket_name, region, credentials)?;
 
   let csv_object_key = format!("{}.csv", symbol);
   let csv_object = try_response!(forecast_bucket.put_object(csv_object_key, &csv.into_inner()?).await?);
   dbg!(&csv_object);
 
-  let credential_provider = StaticProvider::new(AWS_ACCESS_KEY_ID.into(), AWS_SECRET_KEY.into(), Some(AWS_SESSION_TOKEN.into()), None);
+  let credential_provider = StaticProvider::new(AWS_ACCESS_KEY_ID.into(), AWS_SECRET_ACCESS_KEY.into(), Some(AWS_SESSION_TOKEN.into()), None);
   let forecast_client = ForecastClient::new_with(HttpClient::new().unwrap(), credential_provider.clone(), Region::UsEast1);
   let forecast_query_client = ForecastQueryClient::new_with(HttpClient::new().unwrap(), credential_provider, Region::UsEast1);
 

@@ -1,5 +1,5 @@
 variable "aws_access_key_id" {}
-variable "aws_secret_key" {}
+variable "aws_secret_access_key" {}
 variable "aws_session_token" {}
 variable "aws_forecast_role" {}
 variable "ibmcloud_api_key" {}
@@ -28,7 +28,7 @@ terraform {
 provider "aws" {
   region     = "us-east-1"
   access_key = var.aws_access_key_id
-  secret_key = var.aws_secret_key
+  secret_key = var.aws_secret_access_key
   token      = var.aws_session_token
 }
 
@@ -44,8 +44,8 @@ resource "aws_s3_bucket" "stock_forecast_data" {
 
 resource "local_file" "dotenv" {
   sensitive_content = templatefile("${path.module}/.env.example", {
-    aws_secret_key                       = var.aws_secret_key,
     aws_access_key_id                    = var.aws_access_key_id,
+    aws_secret_access_key                = var.aws_secret_access_key,
     aws_session_token                    = var.aws_session_token,
     aws_forecast_bucket                  = aws_s3_bucket.stock_forecast_data.bucket,
     aws_forecast_role                    = var.aws_forecast_role,

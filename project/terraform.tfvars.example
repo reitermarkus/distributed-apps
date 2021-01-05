@@ -1,5 +1,5 @@
 aws_access_key_id                    = "<key>"
-aws_secret_key                       = "<key>"
+aws_secret_access_key                = "<key>"
 aws_session_token                    = "<token>"
 aws_forecast_role                    = "<role>"
 ibmcloud_api_key                     = "<key>"
