@@ -146,7 +146,7 @@ resource "ibm_function_action" "fetch_prices_js" {
   }
 
   limits {
-    timeout = 10000
+    timeout = 600000
     memory  = 128
   }
 
@@ -163,7 +163,7 @@ resource "ibm_function_action" "forecast_js" {
   }
 
   limits {
-    timeout = 10000
+    timeout = 600000
     memory  = 128
   }
 
@@ -180,7 +180,7 @@ resource "ibm_function_action" "process_result_js" {
   }
 
   limits {
-    timeout = 10000
+    timeout = 600000
     memory  = 128
   }
 
@@ -197,7 +197,7 @@ resource "ibm_function_action" "create_chart_js" {
   }
 
   limits {
-    timeout = 10000
+    timeout = 600000
     memory  = 128
   }
 
