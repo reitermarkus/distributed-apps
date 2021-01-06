@@ -29,7 +29,6 @@ if (require.main === module) {
 
   if (json) {
     main(JSON.parse(json))
-      .then(response => console.log(response))
+      .then(response => console.log(JSON.stringify(response, null, 2)))
   }
 }
-

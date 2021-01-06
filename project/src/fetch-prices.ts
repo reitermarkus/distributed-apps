@@ -17,5 +17,11 @@ async function main(params: Params) {
   await uploadToIbmBucket(params?.symbol, token, renamedResults)
 }
 
-exports.main = main
+if (require.main === module) {
+  const json = process.argv[2]
 
+  if (json) {
+    main(JSON.parse(json))
+      .then(response => console.log(JSON.stringify(response, null, 2)))
+  }
+}
