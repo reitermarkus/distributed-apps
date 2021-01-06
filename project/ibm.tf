@@ -137,14 +137,12 @@ data "external" "js_functions" {
 }
 
 resource "ibm_function_action" "fetch_prices_js" {
-  depends_on = [local_file.dotenv]
-
   name      = "fetch_prices_js"
   namespace = var.ibmcloud_washington_namespace
 
   exec {
     kind = "nodejs:12"
-    code = file(data.external.js_functions.result.fetch_prices)
+    code = filebase64(data.external.js_functions.result.fetch_prices)
   }
 
   limits {
@@ -152,23 +150,16 @@ resource "ibm_function_action" "fetch_prices_js" {
     memory  = 128
   }
 
-  user_defined_annotations = <<EOF
-    [{
-      "key":"web-export",
-      "value":true
-    }]
-EOF
+  user_defined_annotations = "[{\"key\":\"web-export\",\"value\":true}]"
 }
 
 resource "ibm_function_action" "forecast_js" {
-  depends_on = [local_file.dotenv]
-
   name      = "forecast_js"
   namespace = var.ibmcloud_washington_namespace
 
   exec {
     kind = "nodejs:12"
-    code = file(data.external.js_functions.result.forecast)
+    code = filebase64(data.external.js_functions.result.forecast)
   }
 
   limits {
@@ -176,23 +167,16 @@ resource "ibm_function_action" "forecast_js" {
     memory  = 128
   }
 
-  user_defined_annotations = <<EOF
-    [{
-      "key":"web-export",
-      "value":true
-    }]
-EOF
+  user_defined_annotations = "[{\"key\":\"web-export\",\"value\":true}]"
 }
 
 resource "ibm_function_action" "process_result_js" {
-  depends_on = [local_file.dotenv]
-
   name      = "process_result_js"
   namespace = var.ibmcloud_washington_namespace
 
   exec {
     kind = "nodejs:12"
-    code = file(data.external.js_functions.result.process_result)
+    code = filebase64(data.external.js_functions.result.process_result)
   }
 
   limits {
@@ -200,23 +184,16 @@ resource "ibm_function_action" "process_result_js" {
     memory  = 128
   }
 
-  user_defined_annotations = <<EOF
-    [{
-      "key":"web-export",
-      "value":true
-    }]
-EOF
+  user_defined_annotations = "[{\"key\":\"web-export\",\"value\":true}]"
 }
 
 resource "ibm_function_action" "create_chart_js" {
-  depends_on = [local_file.dotenv]
-
   name      = "create_chart_js"
   namespace = var.ibmcloud_washington_namespace
 
   exec {
     kind = "nodejs:12"
-    code = file(data.external.js_functions.result.create_chart)
+    code = filebase64(data.external.js_functions.result.create_chart)
   }
 
   limits {
@@ -224,11 +201,8 @@ resource "ibm_function_action" "create_chart_js" {
     memory  = 128
   }
 
-  user_defined_annotations = <<EOF
-    [{
-      "key":"web-export",
-      "value":true
-    }]
-EOF
+  # publish = true
+
+  user_defined_annotations = "[{\"key\":\"web-export\",\"value\":true}]"
 }
 

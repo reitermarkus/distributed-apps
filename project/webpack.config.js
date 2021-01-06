@@ -15,16 +15,17 @@ module.exports = (env, argv) => {
     amd: false,
     optimization: {
       nodeEnv: false,
-      minimize: false,
+      minimize: true,
       moduleIds: 'deterministic',
       chunkIds: 'deterministic',
       mangleExports: true,
       concatenateModules: true,
       innerGraph: true,
-      sideEffects: true
+      sideEffects: true,
+      usedExports: true,
     },
     node: false,
-    devtool: 'inline-source-map',
+    // devtool: 'inline-source-map',
     entry: {
       'fetch-prices': path.resolve(__dirname, path.join('src', 'fetch-prices.ts')),
       'create-chart': path.resolve(__dirname, path.join('src', 'create-chart.ts')),
