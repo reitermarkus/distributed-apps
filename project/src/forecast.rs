@@ -12,7 +12,7 @@ use rusoto_forecast::*;
 use rusoto_forecastquery::{ForecastQueryClient, ForecastQuery, QueryForecastRequest, DataPoint};
 use s3::Bucket;
 use s3::creds::Credentials;
-use serde::{Serialize, Deserialize};
+use serde::Serialize;
 use serde_json::{json, Value};
 use tokio::time::delay_for as sleep;
 
@@ -20,6 +20,8 @@ mod ibm;
 mod macros;
 mod stock_data;
 use stock_data::TimeSeriesDailyAdjusted;
+mod shared;
+use shared::{ForecastInput as Input, ForecastOutput as Output};
 
 const AWS_ACCESS_KEY_ID: &'static str = dotenv!("AWS_ACCESS_KEY_ID");
 const AWS_SECRET_ACCESS_KEY: &'static str = dotenv!("AWS_SECRET_ACCESS_KEY");
@@ -27,18 +29,6 @@ const AWS_SESSION_TOKEN: &'static str = dotenv!("AWS_SESSION_TOKEN");
 const AWS_FORECAST_GROUP: &'static str = dotenv!("AWS_FORECAST_GROUP");
 const AWS_FORECAST_BUCKET: &'static str = dotenv!("AWS_FORECAST_BUCKET");
 const AWS_FORECAST_ROLE: &'static str = dotenv!("AWS_FORECAST_ROLE");
-
-#[derive(Debug, Deserialize)]
-struct Input {
-  symbol: String,
-  object_key: String,
-}
-
-#[derive(Debug, Serialize)]
-struct Output {
-  symbol: String,
-  object_key: String,
-}
 
 #[derive(Debug, Serialize)]
 struct Row {
