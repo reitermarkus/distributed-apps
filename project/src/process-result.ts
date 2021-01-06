@@ -3,16 +3,14 @@ import { getIbmBucketObject, ProcessResultInput as Input, ProcessResultOutput as
 export async function main(input: Input): Promise<Output> {
   const timestamps = {}
 
-  const objects = await Promise.all(input.object_keys.map(async (key, i) => {
-    const object = await getIbmBucketObject(key)
-    object.symbol = input.symbols[i]
-    return object
-  }))
+  const objects = await Promise.all(input.object_keys.map(async (key, i) => await getIbmBucketObject(key)))
 
-  objects.forEach(object => {
+  objects.forEach((object, i) => {
+    const symbol = input.symbols[i]
+
     object.p90.forEach(d => {
       timestamps[d.Timestamp] = (timestamps[d.Timestamp] || {})
-      timestamps[d.Timestamp][object.symbol] = d.Value
+      timestamps[d.Timestamp][symbol] = d.Value
     })
   })
 
