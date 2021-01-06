@@ -1,6 +1,6 @@
 const alpha = require('alphavantage')({ key: process.env.ALPHAVANTAGE_API_KEY })
 import fetch from 'node-fetch'
-import {Params, assert, getIbmBearerToken, uploadToIbmBucket } from './shared.ts'
+import {FetchPricesInput, FetchPricesOutput, assert, getIbmBearerToken, uploadToIbmBucket } from './shared.ts'
 
 const renameObjectKeys = (obj: object) => (
   Object.keys(obj).reduce((acc, key) => ({
@@ -9,12 +9,14 @@ const renameObjectKeys = (obj: object) => (
   }), {})
 )
 
-export async function main(params: Params) {
+export async function main(params: FetchPricesInput): Promise<FetchPricesOutput> {
   assert(params?.symbol)
   const dailyResults = alpha.util.polish(await alpha.data.daily(params?.symbol))
   const renamedResults = renameObjectKeys(dailyResults.data)
   const token = await getIbmBearerToken()
-  await uploadToIbmBucket(params?.symbol, token, renamedResults)
+  const objectKey = `${params.symbol}.json`
+  await uploadToIbmBucket(objectKey, token, renamedResults)
+  return { symbol: params.symbol, object_key: objectKey }
 }
 
 if (require.main === module) {

@@ -16,7 +16,7 @@ pub struct SymbolDataPoint {
   pub value: f64
 }
 
-async fn process_results(params: Value) -> Result<Output> {
+async fn process_result(params: Value) -> Result<Output> {
   let input: Input = serde_json::from_value(params)?;
   let mut objects: Vec<BTreeMap<String, Vec<DataPoint>>> = Vec::new();
 
@@ -64,7 +64,7 @@ async fn process_results(params: Value) -> Result<Output> {
 async fn main() -> Result<()> {
   let params: Value = serde_json::from_str(&env::args().nth(1).expect("no argument specified"))?;
 
-  match process_results(params).await {
+  match process_result(params).await {
     Ok(output) => serde_json::to_writer(io::stdout(), &output)?,
     Err(err) => serde_json::to_writer(io::stdout(), &json!({"error": err.to_string()}))?,
   }

@@ -1,20 +1,10 @@
-import { Params, assert, getIbmBearerToken, uploadToIbmBucket } from './shared.ts'
+import { ForecastInput, ForecastOutput, assert, getIbmBearerToken, getIbmBucketObject, uploadToIbmBucket } from './shared.ts'
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer'
 import fetch from 'node-fetch'
 
 const s3 = require('@auth0/s3')
 const AWS = require('aws-sdk')
 const util = require('util')
-
-const getIbmBucketContent = async (symbol: string) : Promise<void> => {
-  const endpoint = process.env.IBM_OBJECT_STORAGE_ENDPOINT_URL
-  const bucket = process.env.IBM_OBJECT_STORAGE_BUCKET_NAME
-
-  const url = `https://${endpoint}/${bucket}/${symbol}.json`
-
-  let content = await fetch(url)
-  return await content.json()
-}
 
 const symbolDataToCsv = async (symbol: string, bucket_content: any) : Promise<void> => {
   const flat = Object.entries(bucket_content).reduce((acc, [key, val]) => {
@@ -229,18 +219,22 @@ const createForecast = async (symbol: string) => {
     ForecastArn: forecastArn
   })
 
-  const objectKey = `${symbol}.forecast`
+  const objectKey = `${symbol}.forecast.json`
 
   const token = await getIbmBearerToken()
   await uploadToIbmBucket(objectKey, token, forecastResult['Forecast']['Predictions'])
+
+  return { symbol, object_key: objectKey }
 }
 
-export async function main(params: Params) {
+export async function main(params: ForecastInput): Promise<ForecastOutput> {
   assert(params?.symbol)
-  const content = await getIbmBucketContent(params?.symbol)
-  symbolDataToCsv(params?.symbol, content)
-  awsBucketManagement(params?.symbol)
-  createForecast(params?.symbol)
+
+  const content = await getIbmBucketObject(params?.object_key)
+  await symbolDataToCsv(params.symbol, content)
+  await awsBucketManagement(params.symbol)
+
+  return await createForecast(params.symbol)
 }
 
 if (require.main === module) {

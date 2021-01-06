@@ -1,9 +1,15 @@
 import fetch from 'node-fetch'
 
-export interface Params {
-  symbol: string;
+export interface FetchPricesInput {
+  symbol: string,
 }
 
+export interface FetchPricesOutput {
+  symbol: string,
+  object_key: string,
+}
+
+export type ForecastInput = FetchPricesOutput
 export interface ForecastOutput {
   symbol: string,
   object_key: string,
@@ -65,11 +71,11 @@ export const getIbmBearerToken = async (): Promise<string> => {
   return token.access_token
 }
 
-export const uploadToIbmBucket = async (symbol: string, token: string, results: object): Promise<void> => {
+export const uploadToIbmBucket = async (objectKey: string, token: string, results: object): Promise<void> => {
   const endpoint = process.env.IBM_OBJECT_STORAGE_ENDPOINT_URL
   const bucket = process.env.IBM_OBJECT_STORAGE_BUCKET_NAME
 
-  const url = `https://${endpoint}/${bucket}/${symbol}.json`
+  const url = `https://${endpoint}/${bucket}/${objectKey}`
 
   const res = await fetch(url, {
     method: 'PUT',
