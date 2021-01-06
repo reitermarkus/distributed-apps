@@ -3,7 +3,6 @@ use dotenv_codegen::dotenv;
 use s3::bucket::Bucket;
 use s3::creds::Credentials;
 use s3::region::Region;
-use serde::Deserialize;
 
 const OBJECT_STORAGE_ENDPOINT_URL: &'static str = dotenv!("IBM_OBJECT_STORAGE_ENDPOINT_URL");
 const OBJECT_STORAGE_BUCKET_NAME: &'static str = dotenv!("IBM_OBJECT_STORAGE_BUCKET_NAME");

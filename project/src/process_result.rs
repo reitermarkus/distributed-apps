@@ -2,7 +2,7 @@ use anyhow::Result;
 use serde_json::{json, Value};
 use std::env;
 use std::io;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 
 mod shared;
 use shared::{ProcessResultInput as Input, ProcessResultOutput as Output, Dataset};
@@ -13,10 +13,8 @@ use rusoto_forecastquery::DataPoint;
 
 pub struct SymbolDataPoint {
   pub symbol: String,
-  pub timestamp: String,
   pub value: f64
 }
-
 
 async fn process_results(params: Value) -> Result<Output> {
   let input: Input = serde_json::from_value(params)?;
@@ -29,25 +27,34 @@ async fn process_results(params: Value) -> Result<Output> {
     objects.push(response);
   }
 
-  let mut timestamps: Vec<SymbolDataPoint> = Vec::new();
+  let mut timestamps: BTreeMap<String, HashMap<String, f64>> = BTreeMap::new();
 
-  for obj in objects.iter() {
-    let p90 : &Vec<DataPoint> = obj.get("p90").unwrap();
-    for (p, s) in p90.iter().zip(input.symbols.iter()) {
-      timestamps.push(SymbolDataPoint {
-        symbol: s.to_owned(),
-        timestamp: p.timestamp.clone().unwrap(),
-        value: p.value.unwrap()
-      });
+  for mut obj in objects.into_iter() {
+    for (i, d) in obj.remove("p90").unwrap().into_iter().enumerate() {
+      let symbol = input.symbols[i].to_owned();
+      let timestamp = d.timestamp.unwrap();
+      let value = d.value.unwrap();
+
+      if let Some(x) = timestamps.get_mut(&timestamp) {
+        x.insert(symbol, value);
+      } else {
+        let mut map = HashMap::new();
+        map.insert(symbol, value);
+        timestamps.insert(timestamp, map);
+      }
     }
   }
 
   let output = Output {
-    labels: timestamps.iter().map(|t| t.symbol).collect::<Vec<_>>(),
-    datasets: timestamps.iter().map(|t| Dataset {
-      label: t.timestamp,
-      data: t.value
-    }).collect::<Vec<_>>()
+    labels: timestamps.keys().map(ToOwned::to_owned).collect::<Vec<_>>(),
+    datasets: input.symbols.into_iter().map(|symbol| {
+      let data = timestamps.values().map(|v| v.get(&symbol).cloned()).collect::<Vec<_>>();
+
+      Dataset {
+        label: symbol,
+        data
+      }
+    }).collect::<Vec<_>>(),
   };
 
   Ok(output)

@@ -314,8 +314,6 @@ async fn forecast(params: Value) -> Result<Output> {
   let response = String::from_utf8(response)?;
   dbg!(&response);
 
-  let prediction = predictions.remove("p50").unwrap().pop().unwrap();
-
   Ok(Output { symbol, object_key })
 }
 
