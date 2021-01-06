@@ -48,7 +48,7 @@ async fn process_results(params: Value) -> Result<Output> {
   let output = Output {
     labels: timestamps.keys().map(ToOwned::to_owned).collect::<Vec<_>>(),
     datasets: input.symbols.into_iter().map(|symbol| {
-      let data = timestamps.values().map(|v| v.get(&symbol).cloned()).collect::<Vec<_>>();
+      let data = timestamps.values_mut().map(|v| v.remove(&symbol)).collect::<Vec<_>>();
 
       Dataset {
         label: symbol,
