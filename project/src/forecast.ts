@@ -65,13 +65,6 @@ const createForecast = async (symbol: string) => {
     region: 'us-east-1'
   })
 
-  const arnPrefix = 'arn:aws:forecast:us-east-1:916751031899'
-  const dataSetGroup = `${arnPrefix}:dataset-group/stock_forecast_group`
-
-  const describeDataset = util.promisify(forecastService.describeDatasetGroup.bind(forecastService))
-  const datasets = await describeDataset({DatasetGroupArn: dataSetGroup})
-  const datasetArns = datasets['DatasetArns']
-
   const datasetParams = {
     DatasetName: `${symbol}_dataset`,
     DatasetType: 'TARGET_TIME_SERIES',
@@ -80,12 +73,39 @@ const createForecast = async (symbol: string) => {
     DataFrequency: 'D',
   }
 
+  let arnPrefix;
+  const pattern = /.*arn:(.*):dataset/g
+
   try {
     const createDataset = util.promisify(forecastService.createDataset.bind(forecastService))
-    await createDataset(datasetParams)
+    const res = await createDataset(datasetParams)
+    const match = pattern.exec(res)
+    arnPrefix = match[1]
   } catch (e) {
     console.log('dataset already exists\n', e)
+    const match = pattern.exec(e)
+    arnPrefix = match[1]
   }
+
+  arnPrefix = `arn:${arnPrefix}`
+
+  console.log(arnPrefix)
+
+  const dataSetGroup = `${arnPrefix}:dataset-group/stock_forecast_group`
+  const describeDataset = util.promisify(forecastService.describeDatasetGroup.bind(forecastService))
+  const datasets = await describeDataset({DatasetGroupArn: dataSetGroup})
+  const datasetArns = datasets['DatasetArns']
+
+  // try {
+    // const createDatasetGroup = util.promisify(forecastService.createDatasetGroup.bind(forecastService))
+    // await createDatasetGroup({
+      // DatasetGroupName: `${symbol}_dataset_group`,
+      // Domain: 'CUSTOM',
+//
+    // })
+  // } catch (e) {
+    // console.log('dataset already exists\n', e)
+  // }
 
   const updateDatasetGroup = util.promisify(forecastService.updateDatasetGroup.bind(forecastService))
 
