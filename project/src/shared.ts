@@ -5,11 +5,14 @@ export interface Params {
 }
 
 export interface ForecastOutput {
+  symbol: string,
+  object_key: string,
+}
+
+export interface ProcessResultInput {
   symbols: string[],
   object_keys: string[],
 }
-
-export type ProcessResultInput = ForecastOutput
 export interface ProcessResultOutput {
   labels: string[],
   datasets: { label: string, data: number[] }[]

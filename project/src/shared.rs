@@ -13,7 +13,11 @@ pub struct FetchPricesOutput {
 pub use FetchPricesOutput as ForecastInput;
 pub use ForecastInput as ForecastOutput;
 
-pub use ForecastOutput as ProcessResultInput;
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ProcessResultInput {
+  pub symbols: Vec<String>,
+  pub object_keys: Vec<String>,
+}
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Dataset {
   pub label: String,
