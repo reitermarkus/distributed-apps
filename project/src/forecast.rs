@@ -160,44 +160,41 @@ async fn forecast(params: Value) -> Result<Output> {
   //   }
   // }
 
-  let dataset_group_arn = AWS_FORECAST_GROUP;
-
-  let group = forecast_client.describe_dataset_group(DescribeDatasetGroupRequest {
-    dataset_group_arn: dataset_group_arn.into(),
-  }).await?;
-  dbg!(&group);
-
-  let dataset_arns: Vec<String> = group.dataset_arns.unwrap_or_else(|| vec![]);
-  dbg!(&dataset_arns);
-  let dataset_arn: Option<String> = dataset_arns.into_iter().find(|dataset_arn| {
-    dataset_arn.rsplitn(2, "/").next().as_deref() == Some(&dataset_name)
-  });
-  dbg!(&dataset_arn);
-
   let schema: Schema = serde_json::from_str(include_str!("amazon_forecast_target_schema.json")).unwrap();
 
-  let dataset_arn = if let Some(dataset_arn) = dataset_arn {
-    dataset_arn
-  } else {
-    eprintln!("Creating dataset {}.", dataset_name);
+  eprintln!("Creating dataset {}.", dataset_name);
 
-    let request = CreateDatasetRequest {
-      data_frequency: Some("D".into()),
-      dataset_name,
-      dataset_type: "TARGET_TIME_SERIES".into(),
+  let request = CreateDatasetRequest {
+    data_frequency: Some("D".into()),
+    dataset_name,
+    dataset_type: "TARGET_TIME_SERIES".into(),
+    domain: "CUSTOM".into(),
+    encryption_config: None,
+    schema: schema.clone(),
+    tags: None,
+  };
+  let dataset_arn = match forecast_client.create_dataset(request).await {
+    Ok(result) => result.dataset_arn.unwrap(),
+    Err(RusotoError::Service(CreateDatasetError::ResourceAlreadyExists(msg))) => {
+      msg.rsplitn(2, "arn: ").next().unwrap().to_owned()
+    },
+    Err(err) => return Err(err.into()),
+  };
+
+  let result = forecast_client.create_dataset_group(
+    CreateDatasetGroupRequest {
+      dataset_group_name: format!("{}_dataset_group", symbol),
       domain: "CUSTOM".into(),
-      encryption_config: None,
-      schema: schema.clone(),
-      tags: None,
-    };
-    let dataset = forecast_client.create_dataset(request).await?;
-
-    forecast_client.update_dataset_group(UpdateDatasetGroupRequest {
-      dataset_group_arn: dataset_group_arn.into(),
-      dataset_arns: vec![dataset.dataset_arn.clone().unwrap()],
-    }).await?;
-
-    dataset.dataset_arn.unwrap()
+      dataset_arns: Some(vec![dataset_arn.clone()]),
+      ..Default::default()
+    }
+  ).await;
+  let dataset_group_arn = match result {
+    Ok(result) => result.dataset_group_arn.unwrap(),
+    Err(RusotoError::Service(CreateDatasetGroupError::ResourceAlreadyExists(msg))) => {
+      msg.rsplitn(2, "arn: ").next().unwrap().to_owned()
+    },
+    Err(err) => return Err(err.into()),
   };
 
   eprintln!("Dataset ARN: {}", dataset_arn);
