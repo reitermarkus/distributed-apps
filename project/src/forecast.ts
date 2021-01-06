@@ -1,4 +1,4 @@
-import {Params, assert } from './shared.ts'
+import { Params, assert } from './shared.ts'
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer'
 import fetch from 'node-fetch'
 const s3 = require('@auth0/s3')

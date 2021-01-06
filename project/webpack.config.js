@@ -25,6 +25,7 @@ module.exports = (env, argv) => {
     entry: {
       fetch_prices: path.resolve(__dirname, path.join('src', 'fetch_prices.ts')),
       'create-chart': path.resolve(__dirname, path.join('src', 'create-chart.ts')),
+      'process-result': path.resolve(__dirname, path.join('src', 'process-result.ts')),
       forecast: path.resolve(__dirname, path.join('src', 'forecast.ts')),
     },
     output: {

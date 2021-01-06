@@ -1,12 +1,8 @@
 import fetch from 'node-fetch'
 
-interface Params {
-  symbols: string[],
-  timestamps: string[],
-  prices: number[],
-}
+import { CreateChartInput as Input, CreateChartOutput as Output } from './shared.ts'
 
-export async function main(params: Params): Promise<any> {
+export async function main(input: Input): Promise<Output> {
   const res = await fetch('https://quickchart.io/chart/create', {
     method: 'POST',
     headers: {
@@ -19,10 +15,7 @@ export async function main(params: Params): Promise<any> {
       format: 'png',
       chart: {
         type: 'bar',
-        data: {
-          labels: params.symbols,
-          datasets: params.timestamps.map((e, i) => ({ label: e, data: [params.prices[i]] })),
-        }
+        data: input,
       },
     }),
   })
@@ -36,6 +29,7 @@ if (require.main === module) {
 
   if (json) {
     main(JSON.parse(json))
-      .then(response => console.log(response.url))
+      .then(response => console.log(response))
   }
 }
+

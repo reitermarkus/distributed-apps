@@ -1,32 +1,25 @@
 use anyhow::Result;
 use reqwest::Client;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
 use std::env;
 use std::io;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
+struct Dataset {
+  label: String,
+  data: Vec<f32>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 struct Input {
-    symbols: Vec<String>,
-    timestamps: Vec<String>,
-    prices: Vec<f32>,
+  labels: Vec<String>,
+  datasets: Vec<Dataset>,
 }
 
 async fn create_chart(params: Value) -> Result<()> {
     let input: Input = serde_json::from_value(params)?;
-
-    let datasets = input
-        .timestamps
-        .iter()
-        .zip(input.prices.iter())
-        .map(|(t, p)| {
-            [("label", t.to_owned()), ("data", p.to_string())]
-                .iter()
-                .cloned()
-                .collect::<HashMap<_, _>>()
-        })
-        .collect::<Vec<_>>();
 
     let body = json!({
       "backgroundColor": "transparent",
@@ -35,10 +28,7 @@ async fn create_chart(params: Value) -> Result<()> {
       "format": "png",
       "chart": {
         "type": "bar",
-        "data": {
-          "labels": input.symbols,
-          "datasets": datasets
-        }
+        "data": input,
       }
     });
 
