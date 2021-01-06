@@ -9,7 +9,7 @@ const renameObjectKeys = (obj: object) => (
   }), {})
 )
 
-async function main(params: Params) {
+export async function main(params: Params) {
   assert(params?.symbol)
   const dailyResults = alpha.util.polish(await alpha.data.daily(params?.symbol))
   const renamedResults = renameObjectKeys(dailyResults.data)

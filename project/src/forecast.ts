@@ -235,7 +235,7 @@ const createForecast = async (symbol: string) => {
   await uploadToIbmBucket(objectKey, token, forecastResult['Forecast']['Predictions'])
 }
 
-async function main(params: Params) {
+export async function main(params: Params) {
   assert(params?.symbol)
   const content = await getIbmBucketContent(params?.symbol)
   symbolDataToCsv(params?.symbol, content)
