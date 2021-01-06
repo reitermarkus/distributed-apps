@@ -1,4 +1,4 @@
-const alpha = require('alphavantage')({ key: process.env.ALPHA_KEY })
+const alpha = require('alphavantage')({ key: process.env.ALPHAVANTAGE_API_KEY })
 import fetch from 'node-fetch'
 import {Params, assert, getIbmBearerToken, uploadToIbmBucket } from './shared.ts'
 
