@@ -10,14 +10,6 @@ const OBJECT_STORAGE_BUCKET_NAME: &'static str = dotenv!("IBM_OBJECT_STORAGE_BUC
 const IBM_OBJECT_STORAGE_ACCESS_KEY_ID: &'static str = dotenv!("IBM_OBJECT_STORAGE_ACCESS_KEY_ID");
 const IBM_OBJECT_STORAGE_SECRET_ACCESS_KEY: &'static str = dotenv!("IBM_OBJECT_STORAGE_SECRET_ACCESS_KEY");
 
-#[derive(Debug, Deserialize)]
-struct Token {
-  access_token: String,
-  refresh_token_expiration: usize,
-  scope: String,
-  token_type: String,
-}
-
 pub async fn bucket() -> Result<Bucket> {
   let bucket_name = OBJECT_STORAGE_BUCKET_NAME;
   let region = Region::Custom { region: "us-east".into(), endpoint: OBJECT_STORAGE_ENDPOINT_URL.into() };
