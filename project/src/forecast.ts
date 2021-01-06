@@ -1,6 +1,7 @@
-import { Params, assert } from './shared.ts'
+import { Params, assert, getIbmBearerToken, uploadToIbmBucket } from './shared.ts'
 import { createObjectCsvWriter as createCsvWriter } from 'csv-writer'
 import fetch from 'node-fetch'
+
 const s3 = require('@auth0/s3')
 const AWS = require('aws-sdk')
 const util = require('util')
@@ -133,7 +134,7 @@ const createForecast = async (symbol: string) => {
         DatasetImportJobArn: datasetImportJobArn
       })
 
-      if (importDescription.Status === 'ACTIVE') {
+      if (importDescription.Status === 'ACTIVE' || importDescription.Status === 'CREATE_FAILED') {
         clearInterval(interval)
         return res({
           status: 'Creation finished',
@@ -176,7 +177,7 @@ const createForecast = async (symbol: string) => {
         PredictorArn: predictorArn
       })
 
-      if (predictorDescription.Status === 'ACTIVE') {
+      if (predictorDescription.Status === 'ACTIVE' || predictorDescription.Status === 'CREATE_FAILED') {
         clearInterval(interval)
         return res({
           status: 'Predictor finished',
@@ -209,7 +210,7 @@ const createForecast = async (symbol: string) => {
         ForecastArn: forecastArn
       })
 
-      if (forecastDescription.Status === 'ACTIVE') {
+      if (forecastDescription.Status === 'ACTIVE' || forecastDescription === 'CREATE_FAILED') {
         clearInterval(interval)
         return res({
           status: 'Forecast finished',
@@ -220,7 +221,7 @@ const createForecast = async (symbol: string) => {
     }, 2000)
   })
 
-  const queryForecast = util.promisify(forecastService.queryForecast.bind(forecastQueryService))
+  const queryForecast = util.promisify(forecastQueryService.queryForecast.bind(forecastQueryService))
   const forecastResult = await queryForecast({
     Filters: {
       item_id: symbol
@@ -228,18 +229,18 @@ const createForecast = async (symbol: string) => {
     ForecastArn: forecastArn
   })
 
-  console.log(forecastResult)
+  const objectKey = `${symbol}.forecast`
+
+  const token = await getIbmBearerToken()
+  await uploadToIbmBucket(objectKey, token, forecastResult['Forecast']['Predictions'])
 }
 
 async function main(params: Params) {
   assert(params?.symbol)
-  // const content = await getIbmBucketContent(params?.symbol)
-  // symbolDataToCsv(params?.symbol, content)
-  // awsBucketManagement(params?.symbol)
+  const content = await getIbmBucketContent(params?.symbol)
+  symbolDataToCsv(params?.symbol, content)
+  awsBucketManagement(params?.symbol)
   createForecast(params?.symbol)
 }
-
-(() => main({symbol: 'msft'}))()
-
 
 exports.main = main
