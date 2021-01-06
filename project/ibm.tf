@@ -66,46 +66,74 @@ resource "local_file" "ibmcloud_api_key" {
   filename = "${path.module}/ibmcloud_api_key.txt"
 }
 
-resource "random_id" "rust_functions" {
-  byte_length = 8
-}
 
-data "external" "fetch_prices_rs_zip" {
+// Rust Functions
+
+data "external" "rust_functions" {
   depends_on = [local_file.dotenv]
 
-  program = ["${path.module}/build_rust_function.sh", "fetch_prices"]
+  program = ["${path.module}/build_rust_functions.sh"]
 }
 
 resource "null_resource" "fetch_prices_rs" {
   depends_on = [local_file.ibmcloud_api_key]
 
   triggers = {
-    id = data.external.fetch_prices_rs_zip.result.id
-    executable = filesha256(data.external.fetch_prices_rs_zip.result.filename)
+    id = data.external.rust_functions.result.id
+    executable = filesha256(data.external.rust_functions.result.fetch_prices)
   }
 
   provisioner "local-exec" {
-    command = "'${path.module}/deploy_rust_function.sh' fetch_prices_rs '${var.ibmcloud_washington_namespace}' '${data.external.fetch_prices_rs_zip.result.filename}'"
+    command = "'${path.module}/deploy_rust_function.sh' fetch_prices_rs '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.fetch_prices}'"
   }
-}
-
-data "external" "forecast_rs_zip" {
-  depends_on = [local_file.dotenv]
-
-  program = ["${path.module}/build_rust_function.sh", "forecast"]
 }
 
 resource "null_resource" "forecast_rs" {
   depends_on = [local_file.ibmcloud_api_key]
 
   triggers = {
-    id = data.external.forecast_rs_zip.result.id
-    executable = filesha256(data.external.forecast_rs_zip.result.filename)
+    id = data.external.rust_functions.result.id
+    executable = filesha256(data.external.rust_functions.result.forecast)
   }
 
   provisioner "local-exec" {
-    command = "'${path.module}/deploy_rust_function.sh' forecast_rs '${var.ibmcloud_washington_namespace}' '${data.external.forecast_rs_zip.result.filename}'"
+    command = "'${path.module}/deploy_rust_function.sh' forecast_rs '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.forecast}'"
   }
+}
+
+resource "null_resource" "process_result_rs" {
+  depends_on = [local_file.ibmcloud_api_key]
+
+  triggers = {
+    id = data.external.rust_functions.result.id
+    executable = filesha256(data.external.rust_functions.result.process_result)
+  }
+
+  provisioner "local-exec" {
+    command = "'${path.module}/deploy_rust_function.sh' process_result_rs '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.process_result}'"
+  }
+}
+
+resource "null_resource" "create_chart_rs" {
+  depends_on = [local_file.ibmcloud_api_key]
+
+  triggers = {
+    id = data.external.rust_functions.result.id
+    executable = filesha256(data.external.rust_functions.result.create_chart)
+  }
+
+  provisioner "local-exec" {
+    command = "'${path.module}/deploy_rust_function.sh' create_chart_rs '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.create_chart}'"
+  }
+}
+
+
+// JS Functions
+
+data "external" "js_functions" {
+  depends_on = [local_file.dotenv]
+
+  program = ["${path.module}/build_js_functions.sh"]
 }
 
 resource "ibm_function_action" "fetch_prices_js" {
@@ -116,13 +144,68 @@ resource "ibm_function_action" "fetch_prices_js" {
 
   exec {
     kind = "nodejs:12"
-    code = file("dist/fetch_prices.bundle.js")
+    code = file(data.external.js_functions.result.fetch_prices)
   }
 
   limits {
     timeout = 10000
     memory  = 128
   }
+
+  user_defined_annotations = <<EOF
+    [{
+      "key":"web-export",
+      "value":true
+    }]
+EOF
+}
+
+resource "ibm_function_action" "forecast_js" {
+  depends_on = [local_file.dotenv]
+
+  name      = "forecast_js"
+  namespace = var.ibmcloud_washington_namespace
+
+  exec {
+    kind = "nodejs:12"
+    code = file(data.external.js_functions.result.forecast)
+  }
+
+  limits {
+    timeout = 10000
+    memory  = 128
+  }
+
+  user_defined_annotations = <<EOF
+    [{
+      "key":"web-export",
+      "value":true
+    }]
+EOF
+}
+
+resource "ibm_function_action" "process_result_js" {
+  depends_on = [local_file.dotenv]
+
+  name      = "process_result_js"
+  namespace = var.ibmcloud_washington_namespace
+
+  exec {
+    kind = "nodejs:12"
+    code = file(data.external.js_functions.result.process_result)
+  }
+
+  limits {
+    timeout = 10000
+    memory  = 128
+  }
+
+  user_defined_annotations = <<EOF
+    [{
+      "key":"web-export",
+      "value":true
+    }]
+EOF
 }
 
 resource "ibm_function_action" "create_chart_js" {
@@ -133,12 +216,19 @@ resource "ibm_function_action" "create_chart_js" {
 
   exec {
     kind = "nodejs:12"
-    code = file("dist/create-chart.bundle.js")
+    code = file(data.external.js_functions.result.create_chart)
   }
 
   limits {
     timeout = 10000
     memory  = 128
   }
+
+  user_defined_annotations = <<EOF
+    [{
+      "key":"web-export",
+      "value":true
+    }]
+EOF
 }
 
