@@ -13,6 +13,10 @@ name = "forecast"
 path = "src/forecast.rs"
 
 [[bin]]
+name = "process_result"
+path = "src/process_result.rs"
+
+[[bin]]
 name = "create_chart"
 path = "src/create_chart.rs"
 

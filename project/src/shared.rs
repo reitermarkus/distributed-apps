@@ -10,10 +10,10 @@ pub struct FetchPricesOutput {
   pub object_key: String,
 }
 
-pub type ForecastInput = FetchPricesOutput;
-pub type ForecastOutput = ForecastInput;
+pub use FetchPricesOutput as ForecastInput;
+pub use ForecastInput as ForecastOutput;
 
-pub type ProcessResultInput = ForecastOutput;
+pub use ForecastOutput as ProcessResultInput;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Dataset {
   pub label: String,
@@ -25,7 +25,7 @@ pub struct ProcessResultOutput {
   pub datasets: Vec<Dataset>,
 }
 
-pub type CreateChartInput = ProcessResultOutput;
+pub use ProcessResultOutput as CreateChartInput;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CreateChartOutput {
   pub url: String,
