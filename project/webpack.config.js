@@ -1,9 +1,12 @@
 const path = require('path')
 const webpack = require('webpack')
+const fs = require('fs')
 
 const dotenv = require('dotenv').config({
   path: path.join(__dirname, '.env')
 })
+
+const forecastSchema = fs.readFileSync(path.resolve(__dirname, path.join('src', 'amazon_forecast_target_schema.json')), 'utf-8')
 
 module.exports = (env, argv) => {
   return {
@@ -37,7 +40,12 @@ module.exports = (env, argv) => {
       publicPath: '/dist/'
     },
     plugins: [
-      new webpack.EnvironmentPlugin(Object.keys(dotenv.parsed || {})),
+      new webpack.DefinePlugin({
+        'process.env.FORECAST_SCHEMA': forecastSchema
+      }),
+      new webpack.EnvironmentPlugin(
+        Object.keys(dotenv.parsed || {})
+      ),
     ],
     module: {
       rules: [

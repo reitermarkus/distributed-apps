@@ -21,6 +21,7 @@
   "dependencies": {
     "@auth0/s3": "^1.0.0",
     "alphavantage": "^2.2.0",
+    "aws-sdk": "^2.821.0",
     "csv-writer": "^1.6.0",
     "node-fetch": "^2.6.1"
   }
