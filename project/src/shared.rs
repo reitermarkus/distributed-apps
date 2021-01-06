@@ -21,7 +21,7 @@ pub struct ProcessResultInput {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Dataset {
   pub label: String,
-  pub data: Vec<f32>,
+  pub data: Vec<f64>,
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ProcessResultOutput {
