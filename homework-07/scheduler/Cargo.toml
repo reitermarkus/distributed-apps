@@ -1,0 +1,11 @@
+[package]
+name = "scheduler"
+version = "0.1.0"
+authors = ["Markus Reiter <me@reitermark.us>"]
+edition = "2018"
+
+[dependencies]
+petgraph = "0.5"
+serde_yaml = "0.8"
+serde = "1.0"
+anyhow = "1.0"
