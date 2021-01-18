@@ -1,7 +1,5 @@
 use std::fs::File;
 
-use serde_yaml::Value;
-
 use dotenv_codegen::dotenv;
 
 mod sql;
@@ -9,10 +7,6 @@ use sql::SqlClient;
 
 mod afcl;
 use afcl::FunctionChoreography;
-
-struct FunctionChoreography {
-  workflow_body: Value,
-}
 
 #[async_std::main]
 async fn main() -> anyhow::Result<()> {
@@ -32,3 +26,4 @@ async fn main() -> anyhow::Result<()> {
 
   Ok(())
 }
+
