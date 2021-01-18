@@ -23,4 +23,4 @@ echo "workers: ${workers_url}"
 echo "fraction: ${fraction_url}"
 echo "reduction: ${reduction_url}"
 
-java -jar enactment-engine-all.jar nqueens.yml input.json
+java -jar ../enactment-engine-all.jar nqueens.yml input.json

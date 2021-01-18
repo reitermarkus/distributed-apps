@@ -31,4 +31,4 @@ deploy jp-tok tokyo
 deploy eu-de frankfurt
 
 echo "Running function choreography …"
-java -jar enactment-engine-all.jar nqueens.yml input.json
+java -jar ../enactment-engine-all.jar nqueens.yml input.json
