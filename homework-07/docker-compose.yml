@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  db:
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: mariadb
+    container_name: db
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
