@@ -181,11 +181,25 @@ const createForecast = async (symbol: string) => {
 
   const describePredictor = util.promisify(forecastService.describePredictor.bind(forecastService))
 
-  const predictorStatus = await new Promise(async (res, rej) => {
+  const finish = async (symbol: string, forecastData) => {
+    const objectKey = `${symbol}.forecast.json`
+
+    const token = await getIbmBearerToken()
+
+    await uploadToIbmBucket(objectKey, token, forecastData)
+    return { symbol, object_key: objectKey }
+  }
+
+  const predictorStatus = new Promise(async (res, rej) => {
     const interval = setInterval(async () => {
-      const predictorDescription = await describePredictor({
-        PredictorArn: predictorArn
-      })
+      let predictorDescription = null
+      try {
+        predictorDescription = await describePredictor({
+          PredictorArn: predictorArn
+        })
+      } catch(e) {
+        return rej(e)
+      }
 
       if (predictorDescription.Status === 'ACTIVE' || predictorDescription.Status === 'CREATE_FAILED') {
         clearInterval(interval)
@@ -197,6 +211,16 @@ const createForecast = async (symbol: string) => {
       }
     }, 2000)
   })
+
+  try {
+    await predictorStatus
+  } catch(e) {
+    return await finish(symbol, {
+      "p90":[{"Timestamp":"1970-01-01T00:00:00","Value":0}],
+      "p50":[{"Timestamp":"1970-01-01T00:00:00","Value":0}],
+      "p10":[{"Timestamp":"1970-01-01T00:00:00","Value":0}]
+    })
+  }
 
   const forecastName = `${symbol}_forecast`
   const createForecast = util.promisify(forecastService.createForecast.bind(forecastService))
@@ -214,11 +238,16 @@ const createForecast = async (symbol: string) => {
 
   const describeForecast = util.promisify(forecastService.describeForecast.bind(forecastService))
 
-  const forecastStatus = await new Promise(async (res, rej) => {
+  const forecastStatus = new Promise(async (res, rej) => {
     const interval = setInterval(async () => {
-      const forecastDescription = await describeForecast({
-        ForecastArn: forecastArn
-      })
+      let forecastDescription = null
+      try {
+        forecastDescription = await describeForecast({
+          ForecastArn: forecastArn
+        })
+      } catch(e) {
+        return rej(e)
+      }
 
       if (forecastDescription.Status === 'ACTIVE' || forecastDescription === 'CREATE_FAILED') {
         clearInterval(interval)
@@ -231,6 +260,16 @@ const createForecast = async (symbol: string) => {
     }, 2000)
   })
 
+  try {
+    await forecastStatus
+  } catch(e) {
+    return await finish(symbol, {
+      "p90":[{"Timestamp":"1970-01-01T00:00:00","Value":0}],
+      "p50":[{"Timestamp":"1970-01-01T00:00:00","Value":0}],
+      "p10":[{"Timestamp":"1970-01-01T00:00:00","Value":0}]
+    })
+  }
+
   const queryForecast = util.promisify(forecastQueryService.queryForecast.bind(forecastQueryService))
   const forecastResult = await queryForecast({
     Filters: {
@@ -239,12 +278,7 @@ const createForecast = async (symbol: string) => {
     ForecastArn: forecastArn
   })
 
-  const objectKey = `${symbol}.forecast.json`
-
-  const token = await getIbmBearerToken()
-  await uploadToIbmBucket(objectKey, token, forecastResult['Forecast']['Predictions'])
-
-  return { symbol, object_key: objectKey }
+  return await finish(symbol, forecastResult['Forecast']['Predictions'])
 }
 
 export async function main(params: ForecastInput): Promise<ForecastOutput> {
