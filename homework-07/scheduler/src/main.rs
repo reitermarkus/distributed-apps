@@ -26,5 +26,7 @@ async fn main() -> anyhow::Result<()> {
   let sql_client = SqlClient::new(user, password, url, database).await?;
   sql_client.fetch().await?;
 
+  dbg!(&sql_client.function_type_metadata("testFT0").await);
+
   Ok(())
 }

@@ -23,4 +23,3 @@ AFCL
   mysql -u root -pmariadb -e "create database afcl"
   mysql -u root -pmariadb afcl < afcldb.sql
 EOF
-

@@ -1,12 +1,20 @@
 use sqlx::mysql::{MySqlPoolOptions, MySqlDone};
 use sqlx::MySqlPool;
+use sqlx::Row;
 
 use anyhow::Result;
 
 use futures::TryStreamExt;
 
+#[derive(Debug)]
 pub struct SqlClient {
   pool: MySqlPool
+}
+
+#[derive(Debug)]
+pub struct FunctionTypeMetadata {
+  avg_rtt: f64,
+  avg_cost: f64,
 }
 
 impl SqlClient {
@@ -28,5 +36,16 @@ impl SqlClient {
     }
 
     Ok(())
+  }
+
+  pub async fn function_type_metadata(&self, function_type: &str) -> Result<FunctionTypeMetadata> {
+    let row = sqlx::query(r#"
+      SELECT avgRTT, avgCost FROM functiontype
+      WHERE name = ?
+    "#).bind(function_type).fetch_one(&self.pool).await?;
+
+    let avg_rtt = row.try_get::<Option<_>, _>("avgRTT")?.unwrap_or(0.0);
+    let avg_cost = row.try_get::<Option<_>, _>("avgCost")?.unwrap_or(0.0);
+    Ok(FunctionTypeMetadata { avg_rtt, avg_cost })
   }
 }
