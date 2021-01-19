@@ -10,7 +10,7 @@ use afcl::FunctionChoreography;
 
 #[async_std::main]
 async fn main() -> anyhow::Result<()> {
-  let file = File::open("../../project/stock-fc.yml")?;
+  let file = File::open("../project/stock-fc.yml")?;
 
   let fc: FunctionChoreography = serde_yaml::from_reader(&file)?;
   dbg!(&fc);
@@ -26,7 +26,7 @@ async fn main() -> anyhow::Result<()> {
   let sql_client = SqlClient::new(user, password, url, database).await?;
   sql_client.fetch().await?;
 
-  dbg!(&sql_client.function_type_metadata("testFT0").await);
+  dbg!(&sql_client.function_type_metadata("fetchProcess").await);
 
   Ok(())
 }
