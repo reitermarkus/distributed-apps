@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if which podman > /dev/null; then
-  engine="podman"
-else
+if which docker > /dev/null; then
   engine="docker"
+else
+  engine="podman"
 fi
 
 ${engine}-compose up -d
