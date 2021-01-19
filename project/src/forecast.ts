@@ -263,10 +263,11 @@ const createForecast = async (symbol: string) => {
   try {
     await forecastStatus
   } catch(e) {
+    const dummyData = [{"Timestamp": "1970-01-01T00:00:00", "Value": 0}]
     return await finish(symbol, {
-      "p90":[{"Timestamp":"1970-01-01T00:00:00","Value":0}],
-      "p50":[{"Timestamp":"1970-01-01T00:00:00","Value":0}],
-      "p10":[{"Timestamp":"1970-01-01T00:00:00","Value":0}]
+      "p10": dummyData,
+      "p50": dummyData,
+      "p90": dummyData,
     })
   }
 
@@ -284,11 +285,15 @@ const createForecast = async (symbol: string) => {
 export async function main(params: ForecastInput): Promise<ForecastOutput> {
   assert(params?.symbol)
 
-  const content = await getIbmBucketObject(params?.object_key)
-  await symbolDataToCsv(params.symbol, content)
-  await awsBucketManagement(params.symbol)
+  const symbol = params?.symbol.replace(/^"?(.*?)"?$/, "$1")
 
-  return await createForecast(params.symbol)
+  console.log(symbol)
+
+  const content = await getIbmBucketObject(params?.object_key.replace(/^"?(.*?)"?$/, "$1"))
+  await symbolDataToCsv(symbol, content)
+  await awsBucketManagement(symbol)
+
+  return await createForecast(symbol)
 }
 
 if (require.main === module) {

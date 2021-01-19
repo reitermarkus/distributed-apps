@@ -1,6 +1,9 @@
 import { getIbmBucketObject, ProcessResultInput as Input, ProcessResultOutput as Output } from './shared.ts'
 
 export async function main(input: Input): Promise<Output> {
+  input.symbols = input.symbols.map(symbol => symbol.replace(/^"?(.*?)"?$/, "$1"))
+  input.object_keys = input.object_keys.map(key => key.replace(/^"?(.*?)"?$/, "$1"))
+
   const timestamps = {}
 
   const objects = await Promise.all(input.object_keys.map(async (key, i) => await getIbmBucketObject(key)))

@@ -305,7 +305,10 @@ async fn forecast(params: Value) -> Result<Output> {
     Ok(predictions) => predictions,
     Err(_) => {
       let mut map = HashMap::new();
-      map.insert("p90".to_string(), vec![DataPoint { timestamp: Some("2021-01-17".to_string()), value: Some(0.0) }]);
+      let dummy_data = vec![DataPoint { timestamp: Some("1970-01-01T00:00:00".into()), value: Some(0.0) }];
+      map.insert("p10".into(), dummy_data.clone());
+      map.insert("p50".into(), dummy_data.clone());
+      map.insert("p90".into(), dummy_data.clone());
       map
     }
   };
