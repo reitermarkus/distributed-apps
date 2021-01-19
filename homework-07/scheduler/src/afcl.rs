@@ -30,8 +30,8 @@ pub enum Block {
     name: String,
     data_ins: Option<Vec<DataIO>>,
     data_outs: Option<Vec<DataIO>>,
-    loopCounter: LoopCounter,
-    loopBody: Vec<Block>,
+    loop_counter: LoopCounter,
+    loop_body: Vec<Block>,
   },
 }
 
@@ -118,18 +118,18 @@ impl AddToGraph for Block {
           }
         }
       },
-      Self::ParallelFor { name, loopCounter, loopBody, data_ins, data_outs, .. } => {
+      Self::ParallelFor { name, loop_counter, loop_body, data_ins, data_outs, .. } => {
         let index = function_index(graph, functions, name);
 
-        if let Some(source_index) = source_index(graph, functions, Some(&loopCounter.from)) {
+        if let Some(source_index) = source_index(graph, functions, Some(&loop_counter.from)) {
           graph.add_edge(index, source_index, ());
         }
 
-        if let Some(source_index) = source_index(graph, functions, Some(&loopCounter.to)) {
+        if let Some(source_index) = source_index(graph, functions, Some(&loop_counter.to)) {
           graph.add_edge(index, source_index, ());
         }
 
-        if let Some(source_index) = source_index(graph, functions, Some(&loopCounter.step)) {
+        if let Some(source_index) = source_index(graph, functions, Some(&loop_counter.step)) {
           graph.add_edge(index, source_index, ());
         }
 
@@ -141,7 +141,7 @@ impl AddToGraph for Block {
           }
         }
 
-        for function in loopBody {
+        for function in loop_body {
           function.add_to_graph(graph, functions);
         }
 
