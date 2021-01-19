@@ -71,3 +71,17 @@ Sample output for `create_chart`:
   "url": "https://quickchart.io/chart/render/zf-6eb3fb99-72b2-4a00-8277-3566d22924cb"
 }
 ```
+
+
+## Measurements
+
+| Function         | Langauge   | Time (ms) |
+|------------------|------------|-----------|
+| `fetch_prices`   | Rust       |      3627 |
+| `fetch_prices`   | JavaScript |      2333 |
+| `forecast`       | Rust       |      6689 |
+| `forecast`       | JavaScript |      6982 |
+| `process_result` | Rust       |      2826 |
+| `process_result` | JavaScript |      1382 |
+| `fetch_prices`   | Rust       |      1396 |
+| `fetch_prices`   | JavaScript |      1301 |
