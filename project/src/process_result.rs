@@ -17,7 +17,9 @@ pub struct SymbolDataPoint {
 }
 
 async fn process_result(params: Value) -> Result<Output> {
-  let input: Input = serde_json::from_value(params)?;
+  let mut input: Input = serde_json::from_value(params)?;
+  input.symbols = input.symbols.into_iter().map(|s| s.trim_start_matches("\"").trim_end_matches("\"").to_owned()).collect();
+  input.object_keys = input.object_keys.into_iter().map(|s| s.trim_start_matches("\"").trim_end_matches("\"").to_owned()).collect();
   let mut objects: Vec<BTreeMap<String, Vec<DataPoint>>> = Vec::new();
 
   for o in input.object_keys.iter() {

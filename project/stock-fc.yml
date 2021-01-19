@@ -1,100 +1,102 @@
 ---
-name: "stock_fc"
+name: "stockFC"
 dataIns:
-- name: "ticker_symbols"
+- name: "symbols"
   type: "collection"
-  source: "ticker_symbols"
-- name: "folder"
-  type: "string"
-  source: "folder"
+  source: "symbols"
+- name: "symbol_count"
+  type: "number"
+  source: "symbol_count"
 workflowBody:
-- function:
-    name: "fetch_prices"
-    type: "fetch_prices_type"
-    dataIns:
-    - name: "ticker_symbols"
-      type: "collection"
-      source: "stock_fc/ticker_symbols"
-      passing: true
-    - name: "folder"
-      type: "string"
-      source: "stock_fc/folder"
-      passing: true
-    dataOuts:
-    - name: "prices"
-      type: "collection"
-    - name: "tickerNumber"
-      type: "number"
-    properties:
-    - name: "resource"
-      value: "resource_link"
 - parallelFor:
-    name: "parallel_ticker"
+    name: "pTicker"
     dataIns:
-    - name: "ticker_symbols"
+    - name: "symbol"
       type: "string"
-      source: "fetch_prices/ticker_symbols"
-      constraints:
-      - name: "distribution"
-        value: "BLOCK(1)"
-    - name: "prices"
-      type: "collection"
-      source: "fetch_prices/prices"
+      source: "stockFC/symbols"
       constraints:
       - name: "distribution"
         value: "BLOCK(1)"
     loopCounter:
       from: "0"
-      to: "fetch_prices/tickerNumber"
+      to: "stockFC/symbol_count"
       step: "1"
     loopBody:
+    - function:
+        name: "fetchProcess"
+        type: "fetchProcessType"
+        dataIns:
+        - name: "symbol"
+          type: "string"
+          source: "pTicker/symbol"
+        dataOuts:
+        - name: "symbol"
+          type: "string"
+        - name: "object_key"
+          type: "string"
+        properties:
+        - name: "resource"
+          value: "rust:https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/fetch_prices_rs.json"
     - function:
         name: "forecast"
         type: "forecastType"
         dataIns:
-        - name: "prices"
+        - name: "symbol"
           type: "string"
-          source: "parallel_ticker/prices"
-        - name: "ticker"
+          source: "fetchProcess/symbol"
+        - name: "object_key"
           type: "string"
-          source: "parallel_ticker/ticker_symbols"
+          source: "fetchProcess/object_key"
         dataOuts:
-        - name: "predicted_prices"
+        - name: "symbol"
+          type: "string"
+        - name: "object_key"
           type: "string"
         properties:
         - name: "resource"
-          value: "resource_link"
-    - function:
-        name: "process_result"
-        type: "process_result_type"
-        dataIns:
-        - name: "predicted_prices"
-          type: "string"
-          source: "forecast/predicted_prices"
-        dataOuts:
-        - name: "predicted_prices_processed"
-          type: "string"
-        properties:
-        - name: "resource"
-          value: "resource_link"
+          value: "rust:https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/forecast_rs.json"
     dataOuts:
-    - name: "predicted_prices_processed"
+    - name: "symbols"
       type: "collection"
-      source: "process_result"
+      source: "forecast/symbol"
+    - name: "object_keys"
+      type: "collection"
+      source: "forecast/object_key"
 - function:
-    name: "create_chart"
-    type: "create_chart_type"
+    name: "processResult"
+    type: "processResultType"
     dataIns:
-    - name: "predicted_prices_processed"
+    - name: "symbols"
       type: "collection"
-      source: "parallel_ticker/predicted_prices_processed"
+      source: "pTicker/symbols"
+    - name: "object_keys"
+      type: "collection"
+      source: "pTicker/object_keys"
     dataOuts:
-    - name: "charts"
+    - name: "labels"
+      type: "collection"
+    - name: "datasets"
       type: "collection"
     properties:
     - name: "resource"
-      value: "resource_link"
+      value: "rust:https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/process_result_rs.json"
+- function:
+    name: "createChart"
+    type: "createChartType"
+    dataIns:
+    - name: "labels"
+      type: "collection"
+      source: "processResult/labels"
+    - name: "datasets"
+      type: "collection"
+      source: "processResult/datasets"
+    dataOuts:
+    - name: "url"
+      type: "string"
+    properties:
+    - name: "resource"
+      value: "rust:https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/create_chart_rs.json"
 dataOuts:
-- name: "charts"
-  type: "collection"
-  source: "create_chart/charts"
+- name: "url"
+  type: "string"
+  source: "createChart/url"

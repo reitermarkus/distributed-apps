@@ -94,21 +94,12 @@ async fn delete_dataset_import_job(forecast: &dyn Forecast, dataset_import_job_a
   }
 }
 
-async fn forecast(params: Value) -> Result<Output> {
-  let input: Input = serde_json::from_value(params)?;
-  let symbol = input.symbol;
-
-  let object_key = input.object_key;
-
-  let bucket = ibm::bucket().await?;
-  let response = try_response!(bucket.get_object(object_key).await?);
-  let response: BTreeMap<String, TimeSeriesDailyAdjusted> = serde_json::from_slice(&response)?;
-
+async fn forecast_predictions(symbol: &str, response: &BTreeMap<String, TimeSeriesDailyAdjusted>) -> Result<HashMap<String, Vec<DataPoint>>> {
   let mut csv = Writer::from_writer(vec![]);
-  for (k, v) in response.into_iter().rev().take(7) {
+  for (k, v) in response.iter().rev().take(7) {
     csv.serialize(Row {
-      item_id: symbol.clone(),
-      timestamp: k,
+      item_id: symbol.to_owned(),
+      timestamp: k.to_owned(),
       target_value: v.high,
       // price_open: v.open,
       // price_high: v.high,
@@ -198,114 +189,126 @@ async fn forecast(params: Value) -> Result<Output> {
 
   eprintln!("Dataset ARN: {}", dataset_arn);
 
-  let import_dataset = || async {
-    let data_source = DataSource {
-      s3_config: S3Config {
-        kms_key_arn: None,
-        path: format!("s3://{}/{}.csv", AWS_FORECAST_BUCKET, symbol),
-        role_arn: AWS_FORECAST_ROLE.into(),
-      }
-    };
 
-    let dataset_import_job_name = format!("{}_dataset_import", symbol);
-    let result = forecast_client.create_dataset_import_job(CreateDatasetImportJobRequest {
-      data_source,
-      dataset_arn: dataset_arn.clone(),
-      dataset_import_job_name: dataset_import_job_name.clone(),
-      tags: None,
-      timestamp_format: Some("yyyy-MM-dd".into()),
-    }).await;
-
-    let dataset_import_job_arn = match result {
-      Ok(result) => result.dataset_import_job_arn.unwrap(),
-      Err(RusotoError::Service(CreateDatasetImportJobError::ResourceAlreadyExists(msg))) => {
-        msg.rsplitn(2, "arn: ").next().unwrap().to_owned()
-      },
-      Err(err) => return Err(err.into()),
-    };
-
-    eprintln!("Import job '{}' started.", dataset_import_job_arn);
-
-    let import_job = wait_until_active!(forecast_client.describe_dataset_import_job(DescribeDatasetImportJobRequest {
-      dataset_import_job_arn: dataset_import_job_arn.clone(),
-    }));
-
-    let creation_time = import_job.creation_time.unwrap_or(0.0);
-    let last_modification_date = import_job.last_modification_time.unwrap_or(0.0);
-
-    eprintln!("{} import job took {} seconds.", symbol, (last_modification_date - creation_time).round());
-
-    let predictor_name = format!("{}_predictor", symbol);
-    let result = forecast_client.create_predictor(CreatePredictorRequest {
-      algorithm_arn: Some("arn:aws:forecast:::algorithm/CNN-QR".into()),
-      predictor_name,
-      featurization_config: FeaturizationConfig {
-        // forecast_dimensions: Some(vec!["target_value".into(), "price_high".into(), "price_low".into(), "price_close".into(), "price_adjusted_close".into()]),
-        forecast_frequency: "D".into(),
-        ..Default::default()
-      },
-      forecast_horizon: 1,
-      input_data_config: InputDataConfig {
-        dataset_group_arn: dataset_group_arn.into(),
-        ..Default::default()
-      },
-      ..Default::default()
-    }).await;
-
-    let predictor_arn = match result {
-      Ok(result) => result.predictor_arn.unwrap(),
-      Err(RusotoError::Service(CreatePredictorError::ResourceAlreadyExists(msg))) => {
-        msg.rsplitn(2, "arn: ").next().unwrap().to_owned()
-      },
-      Err(err) => return Err(err.into()),
-    };
-    dbg!(&predictor_arn);
-
-    let predictor = wait_until_active!(forecast_client.describe_predictor(DescribePredictorRequest {
-      predictor_arn: predictor_arn.clone(),
-    }));
-    dbg!(&predictor);
-
-    let forecast_name = format!("{}_forecast", symbol);
-    let result = forecast_client.create_forecast(CreateForecastRequest {
-      forecast_name,
-      predictor_arn,
-      ..Default::default()
-    }).await;
-    let forecast_arn = match result {
-      Ok(result) => result.forecast_arn.unwrap(),
-      Err(RusotoError::Service(CreateForecastError::ResourceAlreadyExists(msg))) => {
-        msg.rsplitn(2, "arn: ").next().unwrap().to_owned()
-      },
-      Err(err) => return Err(err.into()),
-    };
-    dbg!(&forecast_arn);
-
-    let forecast = wait_until_active!(forecast_client.describe_forecast(DescribeForecastRequest {
-      forecast_arn: forecast_arn.clone(),
-    }));
-    dbg!(&forecast);
-
-    let mut filters = HashMap::<String, String>::new();
-    filters.insert("item_id".into(), symbol.clone());
-    let result = forecast_query_client.query_forecast(QueryForecastRequest {
-      forecast_arn,
-      filters,
-      ..Default::default()
-    }).await?;
-
-    let predictions = result.forecast.unwrap().predictions.unwrap();
-
-    // delete_dataset_import_job(&forecast_client, dataset_import_job_arn).await?;
-
-    Ok::<HashMap<String, Vec<DataPoint>>, Error>(predictions)
+  let data_source = DataSource {
+    s3_config: S3Config {
+      kms_key_arn: None,
+      path: format!("s3://{}/{}.csv", AWS_FORECAST_BUCKET, symbol),
+      role_arn: AWS_FORECAST_ROLE.into(),
+    }
   };
 
-  let import_result = import_dataset().await;
+  let dataset_import_job_name = format!("{}_dataset_import", symbol);
+  let result = forecast_client.create_dataset_import_job(CreateDatasetImportJobRequest {
+    data_source,
+    dataset_arn: dataset_arn.clone(),
+    dataset_import_job_name: dataset_import_job_name.clone(),
+    tags: None,
+    timestamp_format: Some("yyyy-MM-dd".into()),
+  }).await;
 
+  let dataset_import_job_arn = match result {
+    Ok(result) => result.dataset_import_job_arn.unwrap(),
+    Err(RusotoError::Service(CreateDatasetImportJobError::ResourceAlreadyExists(msg))) => {
+      msg.rsplitn(2, "arn: ").next().unwrap().to_owned()
+    },
+    Err(err) => return Err(err.into()),
+  };
+
+  eprintln!("Import job '{}' started.", dataset_import_job_arn);
+
+  let import_job = wait_until_active!(forecast_client.describe_dataset_import_job(DescribeDatasetImportJobRequest {
+    dataset_import_job_arn: dataset_import_job_arn.clone(),
+  }));
+
+  let creation_time = import_job.creation_time.unwrap_or(0.0);
+  let last_modification_date = import_job.last_modification_time.unwrap_or(0.0);
+
+  eprintln!("{} import job took {} seconds.", symbol, (last_modification_date - creation_time).round());
+
+  let predictor_name = format!("{}_predictor", symbol);
+  let result = forecast_client.create_predictor(CreatePredictorRequest {
+    algorithm_arn: Some("arn:aws:forecast:::algorithm/CNN-QR".into()),
+    predictor_name,
+    featurization_config: FeaturizationConfig {
+      // forecast_dimensions: Some(vec!["target_value".into(), "price_high".into(), "price_low".into(), "price_close".into(), "price_adjusted_close".into()]),
+      forecast_frequency: "D".into(),
+      ..Default::default()
+    },
+    forecast_horizon: 1,
+    input_data_config: InputDataConfig {
+      dataset_group_arn: dataset_group_arn.into(),
+      ..Default::default()
+    },
+    ..Default::default()
+  }).await;
+
+  let predictor_arn = match result {
+    Ok(result) => result.predictor_arn.unwrap(),
+    Err(RusotoError::Service(CreatePredictorError::ResourceAlreadyExists(msg))) => {
+      msg.rsplitn(2, "arn: ").next().unwrap().to_owned()
+    },
+    Err(err) => return Err(err.into()),
+  };
+  dbg!(&predictor_arn);
+
+  let predictor = wait_until_active!(forecast_client.describe_predictor(DescribePredictorRequest {
+    predictor_arn: predictor_arn.clone(),
+  }));
+  dbg!(&predictor);
+
+  let forecast_name = format!("{}_forecast", symbol);
+  let result = forecast_client.create_forecast(CreateForecastRequest {
+    forecast_name,
+    predictor_arn,
+    ..Default::default()
+  }).await;
+  let forecast_arn = match result {
+    Ok(result) => result.forecast_arn.unwrap(),
+    Err(RusotoError::Service(CreateForecastError::ResourceAlreadyExists(msg))) => {
+      msg.rsplitn(2, "arn: ").next().unwrap().to_owned()
+    },
+    Err(err) => return Err(err.into()),
+  };
+  dbg!(&forecast_arn);
+
+  let forecast = wait_until_active!(forecast_client.describe_forecast(DescribeForecastRequest {
+    forecast_arn: forecast_arn.clone(),
+  }));
+  dbg!(&forecast);
+
+  let mut filters = HashMap::<String, String>::new();
+  filters.insert("item_id".into(), symbol.to_owned());
+  let result = forecast_query_client.query_forecast(QueryForecastRequest {
+    forecast_arn,
+    filters,
+    ..Default::default()
+  }).await?;
+
+  Ok(result.forecast.unwrap().predictions.unwrap())
+
+  // delete_dataset_import_job(&forecast_client, dataset_import_job_arn).await?;
   // forecast_client.delete_dataset(DeleteDatasetRequest { dataset_arn }).await?;
+}
 
-  let predictions = import_result?;
+async fn forecast(params: Value) -> Result<Output> {
+  let input: Input = serde_json::from_value(params)?;
+  let symbol = input.symbol.trim_start_matches("\"").trim_end_matches("\"").to_owned();
+
+  let object_key = input.object_key.trim_start_matches("\"").trim_end_matches("\"").to_owned();
+
+  let bucket = ibm::bucket().await?;
+  let response = try_response!(bucket.get_object(object_key).await?);
+  let response: BTreeMap<String, TimeSeriesDailyAdjusted> = serde_json::from_slice(&response)?;
+
+  let predictions = match forecast_predictions(&symbol, &response).await {
+    Ok(predictions) => predictions,
+    Err(_) => {
+      let mut map = HashMap::new();
+      map.insert("p90".to_string(), vec![DataPoint { timestamp: Some("2021-01-17".to_string()), value: Some(0.0) }]);
+      map
+    }
+  };
   dbg!(&predictions);
 
   let object_key = format!("{}.forecast.json", symbol);
