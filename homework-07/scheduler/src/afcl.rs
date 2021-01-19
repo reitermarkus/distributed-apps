@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use petgraph::{Graph, graph::NodeIndex};
 use serde_derive::{Deserialize, Serialize};
-use serde_yaml::Value;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -23,7 +22,7 @@ pub enum Block {
     function_type: String,
     data_ins: Option<Vec<DataIO>>,
     data_outs: Option<Vec<DataIO>>,
-    constraints: Option<Vec<Constraint>>,
+    properties: Option<Vec<Constraint>>,
   },
   #[serde(rename_all = "camelCase")]
   ParallelFor {
@@ -33,6 +32,13 @@ pub enum Block {
     loop_counter: LoopCounter,
     loop_body: Vec<Block>,
   },
+  #[serde(rename_all = "camelCase")]
+  Parallel {
+    name: String,
+    data_ins: Option<Vec<DataIO>>,
+    parallel_body: Vec<ParallellSection>,
+    data_outs: Option<Vec<DataIO>>,
+  }
 }
 
 #[derive(Debug, Deserialize)]
@@ -45,17 +51,31 @@ pub struct LoopCounter {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct ParallellSection {
+  section: Vec<Block>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct DataIO {
   name: String,
   #[serde(rename = "type")]
   data_type: String,
   source: Option<String>,
   passing: Option<bool>,
+  constraints: Option<Vec<Constraint>>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Constraint {
+  name: String,
+  value: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Property {
   name: String,
   value: String,
 }
@@ -152,6 +172,31 @@ impl AddToGraph for Block {
             }
           }
         }
+      },
+      Self::Parallel { name, data_ins, data_outs, parallel_body, .. } => {
+        let index = function_index(graph, functions, name);
+
+        if let Some(data_ins) = data_ins {
+          for data_in in data_ins {
+            if let Some(source_index) = source_index(graph, functions, data_in.source.as_deref()) {
+              graph.add_edge(index, source_index, ());
+            }
+          }
+        }
+
+        for section in parallel_body {
+          for block in &section.section {
+            block.add_to_graph(graph, functions);
+          }
+        }
+
+        if let Some(data_outs) = data_outs {
+          for data_out in data_outs {
+            if let Some(source_index) = source_index(graph, functions, data_out.source.as_deref()) {
+              graph.add_edge(index, source_index, ());
+            }
+          }
+        }
       }
     }
   }
@@ -168,11 +213,8 @@ impl FunctionChoreography {
     dbg!(&functions);
     dbg!(&graph);
 
-
     use petgraph::dot::{Dot, Config};
 
     println!("{:?}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
-
-
   }
 }
