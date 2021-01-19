@@ -6,6 +6,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: mariadb
     container_name: db
+    ports:
+      - 3306:3306
   adminer:
     image: adminer
     ports:

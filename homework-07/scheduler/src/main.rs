@@ -16,10 +16,12 @@ async fn main() -> anyhow::Result<()> {
   dbg!(&fc);
 
   fc.to_graph();
-  let user = dotenv!("USER");
+  let user = dotenv!("DB_USER");
   let url = dotenv!("URL");
   let database = dotenv!("DATABASE");
   let password = dotenv!("PASSWORD");
+
+  dbg!(user, url, database, password);
 
   let sql_client = SqlClient::new(user, password, url, database).await?;
   sql_client.fetch().await?;
