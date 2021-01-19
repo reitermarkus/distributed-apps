@@ -10,7 +10,7 @@ pub struct SqlClient {
 }
 
 impl SqlClient {
-  pub async fn new(url: &str, user: &str, password: &str, database: &str) -> Result<SqlClient> {
+  pub async fn new(user: &str, password: &str, url: &str, database: &str) -> Result<SqlClient> {
     let pool = MySqlPoolOptions::new()
       .max_connections(5)
       .connect(&format!("mysql://{}:{}@{}/{}", user, password, url, database)).await?;
