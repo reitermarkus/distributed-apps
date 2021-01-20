@@ -55,7 +55,7 @@ workflowBody:
                           type: string
                       properties:
                         - name: resource
-                          value: "${fetch_prices_rs_url}"
+                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/fetch_prices_rs.json"
                   - function:
                       name: forecast_0
                       type: forecastType
@@ -73,7 +73,7 @@ workflowBody:
                           type: string
                       properties:
                         - name: resource
-                          value: "${forecast_rs_url}"
+                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/forecast_rs.json"
         - section:
             - parallelFor:
                 name: pTicker_1
@@ -110,7 +110,7 @@ workflowBody:
                           type: string
                       properties:
                         - name: resource
-                          value: "${fetch_prices_js_url}"
+                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/fetch_prices_js.json"
                   - function:
                       name: forecast_1
                       type: forecastType
@@ -128,7 +128,7 @@ workflowBody:
                           type: string
                       properties:
                         - name: resource
-                          value: "${forecast_js_url}"
+                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/forecast_js.json"
       dataOuts:
         - name: symbols
           type: collection
