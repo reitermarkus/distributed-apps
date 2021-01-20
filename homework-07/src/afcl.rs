@@ -1,18 +1,22 @@
 use std::collections::HashMap;
 
+use anyhow::Result;
+
 use petgraph::{Graph, graph::NodeIndex};
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FunctionChoreography {
   pub name: String,
+  #[serde(skip_serializing_if = "Option::is_none")]
   pub data_ins: Option<Vec<DataIO>>,
+  #[serde(skip_serializing_if = "Option::is_none")]
   pub data_outs: Option<Vec<DataIO>>,
   pub workflow_body: Vec<Block>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum Block {
   #[serde(rename_all = "camelCase")]
@@ -20,14 +24,19 @@ pub enum Block {
     name: String,
     #[serde(rename = "type")]
     function_type: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     data_ins: Option<Vec<DataIO>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     data_outs: Option<Vec<DataIO>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     properties: Option<Vec<Constraint>>,
   },
   #[serde(rename_all = "camelCase")]
   ParallelFor {
     name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     data_ins: Option<Vec<DataIO>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     data_outs: Option<Vec<DataIO>>,
     loop_counter: LoopCounter,
     loop_body: Vec<Block>,
@@ -35,13 +44,15 @@ pub enum Block {
   #[serde(rename_all = "camelCase")]
   Parallel {
     name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     data_ins: Option<Vec<DataIO>>,
     parallel_body: Vec<ParallellSection>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     data_outs: Option<Vec<DataIO>>,
   }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LoopCounter {
   pub from: String,
@@ -49,24 +60,27 @@ pub struct LoopCounter {
   pub step: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParallellSection {
   pub section: Vec<Block>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DataIO {
   pub name: String,
   #[serde(rename = "type")]
   pub data_type: String,
+  #[serde(skip_serializing_if = "Option::is_none")]
   pub source: Option<String>,
+  #[serde(skip_serializing_if = "Option::is_none")]
   pub passing: Option<bool>,
+  #[serde(skip_serializing_if = "Option::is_none")]
   pub constraints: Option<Vec<Constraint>>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Constraint {
   pub name: String,
@@ -201,6 +215,10 @@ impl AddToGraph for Block {
 }
 
 impl FunctionChoreography {
+  pub fn to_yaml(&self)  -> Result<String> {
+    Ok(serde_yaml::to_string(&self)?)
+  }
+
   pub fn to_graph(&self) {
     let mut graph = Graph::<&str, ()>::new();
 
