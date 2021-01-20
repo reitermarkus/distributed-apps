@@ -67,7 +67,23 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
       function_iterations.insert(functions, fi);
     }
 
-    dbg!(&function_iterations);
+    let mut function_iterations = function_iterations.into_iter().map(|(k, v)| {
+      (k[0].clone(), (k, v))
+    }).collect::<Vec<_>>();
+    function_iterations.sort_by_key(|&(_, (_, v))| v);
+    function_iterations.reverse();
+
+    let mut function_iterations2 = HashMap::<String, (Vec<String>, usize)>::new();
+
+    for (k0, (k, v)) in function_iterations {
+      if let Some((_, v2)) =function_iterations2.get_mut(&k0) {
+        *v2 += v;
+      } else {
+        function_iterations2.insert(k0, (k, v));
+      }
+    }
+
+    let function_iterations: HashMap::<Vec<String>, usize> = function_iterations2.into_iter().map(|(_, v)| v).collect();
 
     let mut from = 0;
     let parallel_fors = function_iterations.into_iter().enumerate().map(|(fi, (function_names, function_iterations))| {
@@ -134,7 +150,7 @@ async fn main() -> Result<()> {
     *block = schedule_parallel_for(block, iterations, concurrency_limit).await?;
   }
 
-  dbg!(fc);
+  println!("{}", fc.to_yaml()?);
 
   Ok(())
 }
