@@ -1,4 +1,8 @@
+use std::env;
+use std::process;
+use std::path::Path;
 use std::fs::File;
+use std::io::prelude::*;
 use std::collections::HashMap;
 
 use anyhow::Result;
@@ -136,7 +140,14 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
 
 #[async_std::main]
 async fn main() -> Result<()> {
-  let file = File::open("../project/stock-fc.yml")?;
+  let args: Vec<String> = env::args().collect();
+
+  if args.len() == 1 || args.len() > 2 {
+    eprintln!("Invalid amount of arguments specified. The path to the FC is required as the only argument.");
+    process::exit(1);
+  }
+
+  let file = File::open(&args[1])?;
 
   let mut fc: FunctionChoreography = serde_yaml::from_reader(&file)?;
   // dbg!(&fc);
@@ -150,7 +161,11 @@ async fn main() -> Result<()> {
     *block = schedule_parallel_for(block, iterations, concurrency_limit).await?;
   }
 
-  println!("{}", fc.to_yaml()?);
+  let yaml = fc.to_yaml()?;
+  println!("{}", yaml);
 
+  let file_name = Path::new(&args[1]).file_stem().expect("Cannot read name of input file.");
+  let mut out_file = File::create(&format!("{}-cfcl.yml", file_name.to_str().unwrap()))?;
+  out_file.write_all(&yaml.into_bytes())?;
   Ok(())
 }
