@@ -109,10 +109,9 @@ impl DataIO {
   pub fn change_function_name(&mut self, from: &str, to: &str) {
     if let Some(ref mut source) = self.source {
       let mut split = source.splitn(2, "/");
-      if let Some(current) = split.nth(0) {
-
+      if let Some(current) = split.next() {
         if current == from {
-          if let Some(rest) = split.nth(1) {
+          if let Some(rest) = split.next() {
             *source = format!("{}/{}", to, rest);
           } else {
             *source = to.to_owned();

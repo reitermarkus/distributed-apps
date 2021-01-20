@@ -179,7 +179,6 @@ async fn main() -> Result<()> {
   }
 
   let yaml = fc.to_yaml()?;
-  println!("{}", yaml);
 
   let file_name = Path::new(&args[1]).file_stem().expect("Cannot read name of input file.");
   let mut out_file = File::create(&format!("{}-cfcl.yml", file_name.to_str().unwrap()))?;
