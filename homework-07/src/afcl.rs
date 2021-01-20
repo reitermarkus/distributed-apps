@@ -6,10 +6,10 @@ use serde_derive::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FunctionChoreography {
-  name: String,
-  data_ins: Option<Vec<DataIO>>,
-  data_outs: Option<Vec<DataIO>>,
-  workflow_body: Vec<Block>,
+  pub name: String,
+  pub data_ins: Option<Vec<DataIO>>,
+  pub data_outs: Option<Vec<DataIO>>,
+  pub workflow_body: Vec<Block>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

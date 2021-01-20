@@ -14,9 +14,9 @@ pub struct SqlClient {
 
 #[derive(Debug, FromRow)]
 pub struct FunctionImplementation {
-  name: String,
-  avg_rtt: f64,
-  avg_cost: f64,
+  pub name: String,
+  pub avg_rtt: f64,
+  pub avg_cost: f64,
 }
 
 impl SqlClient {
@@ -45,7 +45,7 @@ impl SqlClient {
       SELECT functionimplementation.name as name, functionimplementation.avgRTT AS avg_rtt, functionimplementation.avgCost AS avg_cost
       FROM functionimplementation
       JOIN functiontype ON functionimplementation.functionType_id = functiontype.id
-      WHERE functiontype.name = ?
+      WHERE functiontype.type = ?
     "#).bind(function_type).fetch_all(&self.pool).await?;
 
     Ok(function_implementations)
