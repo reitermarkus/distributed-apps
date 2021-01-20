@@ -132,7 +132,6 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
 
       from += function_iterations;
 
-      block.change_function_name(name, &new_name);
       for function_name in &function_names {
         block.change_function_name(function_name, &format!("{}_{}", function_name, fi));
       }
