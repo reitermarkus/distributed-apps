@@ -23,7 +23,7 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
     let mut concurrency_limits = HashMap::<String, usize>::new();
     let mut function_iterations = HashMap::<Vec<String>, usize>::new();
 
-    for i in 0..iterations {
+    for _ in 0..iterations {
       let mut functions = vec![];
       for block in loop_body {
         if let Block::Function { function_type, .. } = block {
@@ -67,17 +67,29 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
       function_iterations.insert(functions, fi);
     }
 
-    let mut from = 0;
-    let parallel_fors = function_iterations.into_iter().map(|(function_names, i)| {
+    dbg!(&function_iterations);
 
+    let mut from = 0;
+    let parallel_fors = function_iterations.into_iter().enumerate().map(|(fi, (function_names, function_iterations))| {
       let block = Block::ParallelFor {
-        name: format!("{}_{}", name, i),
-        data_ins: data_ins.clone(), // TODO: map names
-        loop_counter: LoopCounter { from: from.to_string(), to: (from + i).to_string(), step: loop_counter.step.clone() },
+        name: format!("{}_{}", name, fi),
+        data_ins: data_ins.clone().map(|data_ins| {
+          data_ins.into_iter().map(|mut data_in| {
+            data_in.source = Some(format!("{}/{}", name, data_in.name));
+            data_in
+          }).collect()
+        }),
+        loop_counter: LoopCounter { from: from.to_string(), to: (from + function_iterations).to_string(), step: loop_counter.step.clone() },
         loop_body: loop_body.iter().enumerate().map(|(i, block)| {
           let mut block = block.clone();
 
-          if let Block::Function { .. } = &mut block {
+          if let Block::Function { properties: Some(properties), .. } = &mut block {
+            for property in properties.iter_mut() {
+
+              if property.name == "resource" {
+                property.value = format!("${{{}_url}}", function_names[i]);
+              }
+            }
           }
 
           block
@@ -85,16 +97,19 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
         data_outs: data_outs.clone(), // TODO: map names
       };
 
-      from += i;
+      from += function_iterations;
 
       block
     }).collect();
 
-    dbg!(&parallel_fors);
+    let data_ins = data_ins.clone().map(|data_ins| data_ins.into_iter().map(|mut data_in| {
+      data_in.constraints = None;
+      data_in
+    }).collect());
 
     Ok(Block::Parallel {
       name: name.clone(),
-      data_ins: data_ins.clone(),
+      data_ins,
       parallel_body: vec![ParallellSection { section: parallel_fors }],
       data_outs: data_outs.clone(),
     })
@@ -115,11 +130,11 @@ async fn main() -> Result<()> {
   let iterations = 20;
   let concurrency_limit = 2;
 
-  for mut block in &mut fc.workflow_body {
+  for block in &mut fc.workflow_body {
     *block = schedule_parallel_for(block, iterations, concurrency_limit).await?;
   }
 
-  // dbg!(fc);
+  dbg!(fc);
 
   Ok(())
 }

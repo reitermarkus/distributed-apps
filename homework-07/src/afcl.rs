@@ -58,26 +58,26 @@ pub struct ParallellSection {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DataIO {
-  name: String,
+  pub name: String,
   #[serde(rename = "type")]
-  data_type: String,
-  source: Option<String>,
-  passing: Option<bool>,
-  constraints: Option<Vec<Constraint>>,
+  pub data_type: String,
+  pub source: Option<String>,
+  pub passing: Option<bool>,
+  pub constraints: Option<Vec<Constraint>>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Constraint {
-  name: String,
-  value: String,
+  pub name: String,
+  pub value: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Property {
-  name: String,
-  value: String,
+  pub name: String,
+  pub value: String,
 }
 
 trait AddToGraph {
@@ -86,8 +86,6 @@ trait AddToGraph {
 
 impl AddToGraph for FunctionChoreography {
   fn add_to_graph<'a>(&'a self, graph: &mut Graph<&'a str, ()>, functions: &mut HashMap<&'a str, NodeIndex>) {
-    let index = function_index(graph, functions, &self.name);
-
     for block in &self.workflow_body {
       block.add_to_graph(graph, functions);
     }

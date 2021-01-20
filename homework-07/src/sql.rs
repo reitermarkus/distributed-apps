@@ -1,11 +1,8 @@
-use sqlx::mysql::{MySqlPoolOptions, MySqlDone};
+use sqlx::mysql::MySqlPoolOptions;
 use sqlx::MySqlPool;
-use sqlx::Row;
 use sqlx::FromRow;
 
 use anyhow::Result;
-
-use futures::TryStreamExt;
 
 #[derive(Debug)]
 pub struct SqlClient {
@@ -28,16 +25,6 @@ impl SqlClient {
     Ok(SqlClient {
       pool: pool
     })
-  }
-
-  pub async fn fetch(&self) -> Result<()> {
-    let mut rows = sqlx::query("SELECT * FROM FCdeployment").fetch(&self.pool);
-
-    while let Some(row) = rows.try_next().await? {
-      dbg!(row);
-    }
-
-    Ok(())
   }
 
   pub async fn function_type_metadata(&self, function_type: &str) -> Result<Vec<FunctionImplementation>> {
