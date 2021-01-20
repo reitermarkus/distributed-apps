@@ -83,5 +83,5 @@ Sample output for `create_chart`:
 | `forecast`       | JavaScript |      6982 | 0.000000059347   |
 | `process_result` | Rust       |      2826 | 0.000000024021   |
 | `process_result` | JavaScript |      1382 | 0.000000011747   |
-| `fetch_prices`   | Rust       |      1396 | 0.000000011866   |
-| `fetch_prices`   | JavaScript |      1301 | 0.0000000110585  |
+| `create_chart`   | Rust       |      1396 | 0.000000011866   |
+| `create_chart`   | JavaScript |      1301 | 0.0000000110585  |
