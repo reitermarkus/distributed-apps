@@ -12,7 +12,7 @@ use afcl::{FunctionChoreography, Block, LoopCounter, ParallellSection};
 fn schedule_parallel_for(block: Block, iterations: usize, concurrency_limit: usize) -> Block {
   if let Block::ParallelFor { name, data_ins, data_outs, loop_counter, loop_body } = &block {
     let mut functions = HashMap::<String, usize>::new();
-    let mut concurrency_limits = HashMap::<usize, usize>::new();
+    let mut concurrency_limits = HashMap::<String, usize>::new();
 
     Block::Parallel {
       name: name.clone(),

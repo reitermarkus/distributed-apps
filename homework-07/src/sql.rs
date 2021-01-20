@@ -14,7 +14,6 @@ pub struct SqlClient {
 
 #[derive(Debug, FromRow)]
 pub struct FunctionImplementation {
-  id: u64,
   name: String,
   avg_rtt: f64,
   avg_cost: f64,
