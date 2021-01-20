@@ -52,6 +52,31 @@ pub enum Block {
   }
 }
 
+impl Block {
+  pub fn change_function_name(&mut self, from: &str, to: &str) {
+    match self {
+      Self::Function { name, ref mut data_ins, ref mut data_outs, .. } | Self::ParallelFor { name, ref mut data_ins, ref mut data_outs, .. } => {
+        if name == from {
+          *name = to.to_owned();
+        }
+
+        if let Some(data_ins) = data_ins {
+          for data_in in data_ins.iter_mut() {
+            data_in.change_function_name(from, to);
+          }
+        }
+
+        if let Some(data_outs) = data_outs {
+          for data_out in data_outs.iter_mut() {
+            data_out.change_function_name(from, to);
+          }
+        }
+      },
+      _ => (),
+    }
+  }
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LoopCounter {
@@ -78,6 +103,24 @@ pub struct DataIO {
   pub passing: Option<bool>,
   #[serde(skip_serializing_if = "Option::is_none")]
   pub constraints: Option<Vec<Constraint>>,
+}
+
+impl DataIO {
+  pub fn change_function_name(&mut self, from: &str, to: &str) {
+    if let Some(ref mut source) = self.source {
+      let mut split = source.splitn(2, "/");
+      if let Some(current) = split.nth(0) {
+
+        if current == from {
+          if let Some(rest) = split.nth(1) {
+            *source = format!("{}/{}", to, rest);
+          } else {
+            *source = to.to_owned();
+          }
+        }
+      }
+    }
+  }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

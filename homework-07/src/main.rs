@@ -26,11 +26,16 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
     let mut est = HashMap::<String, (f64, f64)>::new();
     let mut concurrency_limits = HashMap::<String, usize>::new();
     let mut function_iterations = HashMap::<Vec<String>, usize>::new();
+    let mut function_names = Vec::new();
 
     for _ in 0..iterations {
       let mut functions = vec![];
       for block in loop_body {
-        if let Block::Function { function_type, .. } = block {
+        if let Block::Function { name, function_type, .. } = block {
+          if !function_names.contains(&name) {
+            function_names.push(&name);
+          }
+
           let mut function_deployments = sql_client.function_type_metadata(function_type).await?;
           function_deployments.sort_by_key(|d| ordered_float::OrderedFloat::<f64>(d.avg_rtt));
 
@@ -90,9 +95,10 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
     let function_iterations: HashMap::<Vec<String>, usize> = function_iterations2.into_iter().map(|(_, v)| v).collect();
 
     let mut from = 0;
-    let parallel_fors = function_iterations.into_iter().enumerate().map(|(fi, (function_names, function_iterations))| {
-      let block = Block::ParallelFor {
-        name: format!("{}_{}", name, fi),
+    let parallel_fors: Vec<Block> = function_iterations.into_iter().enumerate().map(|(fi, (function_deployment_names, function_iterations))| {
+      let new_name = format!("{}_{}", name, fi);
+      let mut block = Block::ParallelFor {
+        name: new_name.clone(),
         data_ins: data_ins.clone().map(|data_ins| {
           data_ins.into_iter().map(|mut data_in| {
             data_in.source = Some(format!("{}/{}", name, data_in.name));
@@ -103,11 +109,18 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
         loop_body: loop_body.iter().enumerate().map(|(i, block)| {
           let mut block = block.clone();
 
-          if let Block::Function { properties: Some(properties), .. } = &mut block {
-            for property in properties.iter_mut() {
+          block.change_function_name(name, &new_name);
+          for function_name in &function_names {
+            block.change_function_name(function_name, &format!("{}_{}", function_name, fi));
+          }
 
-              if property.name == "resource" {
-                property.value = format!("${{{}_url}}", function_names[i]);
+          if let Block::Function { data_ins, properties, .. } = &mut block {
+            if let Some(properties) = properties {
+              for property in properties.iter_mut() {
+
+                if property.name == "resource" {
+                  property.value = format!("${{{}_url}}", function_deployment_names[i]);
+                }
               }
             }
           }
@@ -118,6 +131,11 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
       };
 
       from += function_iterations;
+
+      block.change_function_name(name, &new_name);
+      for function_name in &function_names {
+        block.change_function_name(function_name, &format!("{}_{}", function_name, fi));
+      }
 
       block
     }).collect();
@@ -130,7 +148,7 @@ async fn schedule_parallel_for(block: &Block, iterations: usize, concurrency_lim
     Ok(Block::Parallel {
       name: name.clone(),
       data_ins,
-      parallel_body: vec![ParallellSection { section: parallel_fors }],
+      parallel_body: parallel_fors.into_iter().map(|section| ParallellSection { section: vec![section] } ).collect(),
       data_outs: data_outs.clone(),
     })
   } else {
