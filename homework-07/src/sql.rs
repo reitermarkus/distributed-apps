@@ -1,6 +1,7 @@
 use sqlx::mysql::{MySqlPoolOptions, MySqlDone};
 use sqlx::MySqlPool;
 use sqlx::Row;
+use sqlx::FromRow;
 
 use anyhow::Result;
 
@@ -11,8 +12,10 @@ pub struct SqlClient {
   pool: MySqlPool
 }
 
-#[derive(Debug)]
-pub struct FunctionTypeMetadata {
+#[derive(Debug, FromRow)]
+pub struct FunctionImplementation {
+  id: u64,
+  name: String,
   avg_rtt: f64,
   avg_cost: f64,
 }
@@ -38,14 +41,14 @@ impl SqlClient {
     Ok(())
   }
 
-  pub async fn function_type_metadata(&self, function_type: &str) -> Result<FunctionTypeMetadata> {
-    let row = sqlx::query(r#"
-      SELECT avgRTT, avgCost FROM functiontype
-      WHERE name = ?
-    "#).bind(function_type).fetch_one(&self.pool).await?;
+  pub async fn function_type_metadata(&self, function_type: &str) -> Result<Vec<FunctionImplementation>> {
+    let function_implementations = sqlx::query_as(r#"
+      SELECT functionimplementation.name as name, functionimplementation.avgRTT AS avg_rtt, functionimplementation.avgCost AS avg_cost
+      FROM functionimplementation
+      JOIN functiontype ON functionimplementation.functionType_id = functiontype.id
+      WHERE functiontype.name = ?
+    "#).bind(function_type).fetch_all(&self.pool).await?;
 
-    let avg_rtt = row.try_get::<Option<_>, _>("avgRTT")?.unwrap_or(0.0);
-    let avg_cost = row.try_get::<Option<_>, _>("avgCost")?.unwrap_or(0.0);
-    Ok(FunctionTypeMetadata { avg_rtt, avg_cost })
+    Ok(function_implementations)
   }
 }

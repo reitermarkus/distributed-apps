@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use petgraph::{Graph, graph::NodeIndex};
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FunctionChoreography {
   name: String,
@@ -12,7 +12,7 @@ pub struct FunctionChoreography {
   workflow_body: Vec<Block>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum Block {
   #[serde(rename_all = "camelCase")]
@@ -41,21 +41,21 @@ pub enum Block {
   }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LoopCounter {
-  from: String,
-  to: String,
-  step: String,
+  pub from: String,
+  pub to: String,
+  pub step: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParallellSection {
-  section: Vec<Block>,
+  pub section: Vec<Block>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DataIO {
   name: String,
@@ -66,14 +66,14 @@ pub struct DataIO {
   constraints: Option<Vec<Constraint>>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Constraint {
   name: String,
   value: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Property {
   name: String,
