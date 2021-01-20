@@ -32,13 +32,13 @@ workflowBody:
                 dataOuts:
                   - name: symbols
                     type: collection
-                    source: forecast_0
+                    source: forecast_0/symbol
                   - name: object_keys
                     type: collection
-                    source: forecast_0
+                    source: forecast_0/object_key
                 loopCounter:
                   from: "0"
-                  to: "8"
+                  to: "12"
                   step: "1"
                 loopBody:
                   - function:
@@ -47,7 +47,7 @@ workflowBody:
                       dataIns:
                         - name: symbol
                           type: string
-                          source: pTicker_0
+                          source: pTicker_0/symbol
                       dataOuts:
                         - name: symbol
                           type: string
@@ -55,17 +55,17 @@ workflowBody:
                           type: string
                       properties:
                         - name: resource
-                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/fetch_prices_rs.json"
+                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/fetch_prices_js.json"
                   - function:
                       name: forecast_0
                       type: forecastType
                       dataIns:
                         - name: symbol
                           type: string
-                          source: fetchProcess_0
+                          source: fetchProcess_0/symbol
                         - name: object_key
                           type: string
-                          source: fetchProcess_0
+                          source: fetchProcess_0/object_key
                       dataOuts:
                         - name: symbol
                           type: string
@@ -73,7 +73,7 @@ workflowBody:
                           type: string
                       properties:
                         - name: resource
-                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/forecast_rs.json"
+                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/forecast_js.json"
         - section:
             - parallelFor:
                 name: pTicker_1
@@ -87,12 +87,12 @@ workflowBody:
                 dataOuts:
                   - name: symbols
                     type: collection
-                    source: forecast_1
+                    source: forecast_1/symbol
                   - name: object_keys
                     type: collection
-                    source: forecast_1
+                    source: forecast_1/object_key
                 loopCounter:
-                  from: "8"
+                  from: "12"
                   to: "20"
                   step: "1"
                 loopBody:
@@ -102,7 +102,7 @@ workflowBody:
                       dataIns:
                         - name: symbol
                           type: string
-                          source: pTicker_1
+                          source: pTicker_1/symbol
                       dataOuts:
                         - name: symbol
                           type: string
@@ -110,17 +110,17 @@ workflowBody:
                           type: string
                       properties:
                         - name: resource
-                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/fetch_prices_js.json"
+                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/fetch_prices_rs.json"
                   - function:
                       name: forecast_1
                       type: forecastType
                       dataIns:
                         - name: symbol
                           type: string
-                          source: fetchProcess_1
+                          source: fetchProcess_1/symbol
                         - name: object_key
                           type: string
-                          source: fetchProcess_1
+                          source: fetchProcess_1/object_key
                       dataOuts:
                         - name: symbol
                           type: string
@@ -128,7 +128,7 @@ workflowBody:
                           type: string
                       properties:
                         - name: resource
-                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/forecast_js.json"
+                          value: "https://us-east.functions.appdomain.cloud/api/v1/web/a4bb0bee-592d-4406-9442-26dd24221c46/default/forecast_rs.json"
       dataOuts:
         - name: symbols
           type: collection
