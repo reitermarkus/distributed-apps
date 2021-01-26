@@ -6,6 +6,7 @@
 \usepackage[noend]{algpseudocode}
 \usepackage{hyperref}
 \usepackage[export]{adjustbox}
+\usepackage{listings}
 
 \makeatletter
 \def\BState{\State\hskip-\ALG@thistlm}
@@ -124,14 +125,33 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Wokflow Structure (AFCL)}
-    \begin{itemize}
-        \item Screenshot from FC Editor
-        \item Data inputs
-        \item Data outputs
-        \item Functions
-    \end{itemize}
+\begin{frame}{Wokflow Structure (AFCL): Function Inputs/Outputs}
+  \begin{itemize}
+    \item \texttt{fetch\_prices}:   \\
+      \textleftarrow\ \lstinline{\{"symbol": "IBM"\}}                                  \\
+      \textrightarrow\ \lstinline{\{"symbol": "IBM", "object\_key": "IBM.json"\}}
+    \item \texttt{forecast}:        \\
+      \textleftarrow\ \lstinline{\{"symbol": "IBM", "object\_key": "IBM.json"\}}       \\
+      \textrightarrow\ \lstinline{\{"symbol": "IBM", "object\_key": "IBM.forecast.json"\}}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Wokflow Structure (AFCL): Function Inputs/Outputs}
+  \begin{itemize}
+    \item \texttt{process\_result}: \\
+      \textleftarrow\ \lstinline{\{"symbols": ["IBM"], "object\_keys": ["IBM.forecast.json"]\}} \\
+      \textrightarrow\ \lstinline{\{} \\
+        \lstinline{\ \ "labels": ["2021-01-01"], "datasets": [\{"label": "IBM", "data": [114.21]\}]} \\
+        \lstinline{\}}
+    \item \texttt{create\_graph}:   \\
+      \textleftarrow\ \lstinline{\{} \\
+        \lstinline{\ \ "labels": ["2021-01-01"], "datasets": [\{"label": "IBM", "data": [114.21]\}]} \\
+        \lstinline{\}} \\
+      \textrightarrow\ \lstinline{\{} \\
+        \lstinline{\ \ "url":}
+        \lstinline{\ \ "https://quickchart.io/chart/render/zf-6eb3fb99-72b2-4a00-8277-3566d22924cb"}
+        \lstinline{\}}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
