@@ -1,0 +1,51 @@
+\documentclass[a4paper]{DPSbachelor}
+\usepackage[a4paper]{geometry}
+
+\usepackage{color}
+
+\graphicspath{{./assets/}}
+
+
+% *** WATERMARK *********************************************************************************
+\usepackage{savesym}
+\savesymbol{csvloop}
+  \usepackage[printwatermark]{xwatermark}
+  \restoresymbol{WATERMARK}{csvloop}
+
+\include{codeKeywords}
+
+\newcommand*{\showPlots}{}%
+
+% *** CONFIG **************************************************************************************
+
+\title{TITLE: Project X - ...}
+
+\author{TEAM: Student 1, Student 2, ...}
+\mailaddress{}
+\supervisor{Sashko Ristov}
+\date{\today}
+
+% *** BEGIN ***************************************************************************************
+\begin{document}
+	\maketitle
+
+	\abstract{\input{report/abstract}}
+
+	\tableofcontents
+%	\listoffigures
+% 	\listoftables
+
+	\include{report/introduction}
+	\include{report/solution}
+	\include{report/challenges}
+	\include{report/evaluation}
+	\include{report/conclusion}
+
+%	\bibliographystyle{plain}
+% 	\bibliography{biblio}
+
+
+	\include{report/appendix}
+
+
+\end{document}
