@@ -4,7 +4,6 @@
 \LoadClass[a4paper,11pt,abstracton,twoside]{scrreprt}
 \RequirePackage{fancyhdr}
 \RequirePackage[english,ngerman]{babel}
-\RequirePackage[latin1]{inputenc}
 \RequirePackage{a4}
 \RequirePackage{picins}
 \RequirePackage{graphicx}
@@ -145,13 +144,13 @@ chapter%
  \renewcommand*\thefootnote{\@fnsymbol\c@footnote}%
  \let\@oldmakefnmark\@makefnmark
  \renewcommand*{\@makefnmark}{\rlap\@oldmakefnmark}
- 
- 
+
+
  \parpic[l]{
   \includegraphics[width=5.7cm]{unilogo_title}
  }
-    
- \begin{flushright} 
+
+ \begin{flushright}
   {\normalfont \sffamily
    {\LARGE \university}
    \vspace{\stretch{1}}
@@ -163,7 +162,7 @@ chapter%
    {\large \\ \@publishers \\ \ }
    \vspace{\stretch{1}}
    {\bfseries
-    {\large \\ \@author 
+    {\large \\ \@author
     \ifx\@matriculationnumber\@empty{}\else{~(\@matriculationnumber)}\fi \\ \
     }
    }
@@ -172,9 +171,9 @@ chapter%
    {\large \\ Innsbruck \\ \today{} \\ \ }
   }
  \end{flushright}
- 
- 
- 
+
+
+
 
  \@thanks
  \global\let\@thanks\@empty
