@@ -195,17 +195,25 @@
     \vspace{1cm}
 \end{frame}
 
-\begin{frame}
-\frametitle{Main Challenges}
+\begin{frame}{Main Challenges}
+  \begin{itemize}
+  \item AWS Forecast:
     \begin{itemize}
-        \item Forecast function
-          \begin{itemize}
-            \item Predictor creation
-            \item Forecast creation
-          \end{itemize}
-        \item Periodic checking and waiting in the function itself
-        \item Upload limitations with TerraForm
+      \item very complicated setup, involving 6 steps and very long wait times, e.g.
+        \begin{itemize}
+          \item data import: $\approx$10 minutes
+          \item predictor creation: $\approx$30 minutes
+          \item forecast creation: $\approx$10 minutes
+        \end{itemize}
+      \item solution: periodic checking and waiting in the function itself
     \end{itemize}
+
+  \item Terraform:
+    \begin{itemize}
+      \item only supports functions up to 4MB
+      \item solution: use \texttt{null\_resource} and custom script for deployment
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
