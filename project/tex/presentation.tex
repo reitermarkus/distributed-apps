@@ -155,25 +155,31 @@
         \lstinline{\ \ "labels": ["2021-01-01"], "datasets": [\{"label": "IBM", "data": [114.21]\}]} \\
         \lstinline{\}} \\
       \textrightarrow\ \lstinline{\{} \\
-        \lstinline{\ \ "url":}
-        \lstinline{\ \ "https://quickchart.io/chart/render/zf-6eb3fb99-72b2-4a00-8277-3566d22924cb"}
+        \lstinline{\ \ "url": "https://quickchart.io/chart/render/zf-6eb3fb99-...-3566d22924cb"} \\
         \lstinline{\}}
   \end{itemize}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Scheduler to CFCL}
+\begin{frame}{Scheduler to CFCL}
   \begin{center}
     \includegraphics[height=6.7cm, keepaspectratio]{./assets/cfcl}
   \end{center}
 \end{frame}
 
-\begin{frame}
-\frametitle{Scheduler to CFCL}
-    \begin{itemize}
-        \item Scheduler algorithm and implementation
-        \item Screenshot from FC Editor
+\begin{frame}{Scheduler to CFCL: Algorithm}
+  \begin{itemize}
+    \item Inputs: \texttt{iterations} and \texttt{concurrency\_limit}
+    \item Variables: \texttt{concurrency\_limits} (\texttt{Map<String, usize>}), \\ \texttt{function\_iterations} (\texttt{Map<String, usize>}) and \\ \texttt{est} (\texttt{Map<String, (f64, f64)>})
+    \item For \texttt{i} in \texttt{0...iterations}, loop through functions in \texttt{parallelFor} block:
+      \begin{itemize}
+        \item Look up FDs in database and insert function names in all maps if not already contained
+        \item Sort FDs by the start time stored in \texttt{est} and loop through them:
+          \begin{itemize}
+            \item If FD has not yet reached the \texttt{concurrency\_limit} in \texttt{concurrency\_limits}, select it and update \texttt{concurrency\_limits}.
+            \item Otherwise, reset the limit and increase the start time in \texttt{est}.
+          \end{itemize}
     \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
