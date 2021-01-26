@@ -24,3 +24,5 @@ ibmcloud_api_key.txt
 *.pdf
 !uibk_logo_4c_cmyk.pdf
 *.xwm
+*.lot
+*.lof

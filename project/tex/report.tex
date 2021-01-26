@@ -1,6 +1,8 @@
 \documentclass[a4paper]{DPSbachelor}
 \usepackage[a4paper]{geometry}
 
+\usepackage{graphicx}
+
 \usepackage{color}
 
 \graphicspath{{./assets/}}
@@ -9,8 +11,8 @@
 % *** WATERMARK *********************************************************************************
 \usepackage{savesym}
 \savesymbol{csvloop}
-  \usepackage[printwatermark]{xwatermark}
-  \restoresymbol{WATERMARK}{csvloop}
+% \usepackage[printwatermark]{xwatermark}
+\restoresymbol{WATERMARK}{csvloop}
 
 % \include{codeKeywords}
 
@@ -27,25 +29,22 @@
 
 % *** BEGIN ***************************************************************************************
 \begin{document}
-	\maketitle
+  \maketitle
 
 	\abstract{\input{report/abstract}}
 
-	\tableofcontents
-%	\listoffigures
-% 	\listoftables
+  \tableofcontents
+  \listoffigures
+  \listoftables
 
-	\include{report/introduction}
-	\include{report/solution}
-	\include{report/challenges}
-	\include{report/evaluation}
-	\include{report/conclusion}
+  \include{report/introduction}
+  \include{report/solution}
+  \include{report/challenges}
+  \include{report/evaluation}
+  \include{report/conclusion}
 
-%	\bibliographystyle{plain}
-% 	\bibliography{biblio}
+  % \bibliographystyle{plain}
+  % \bibliography{biblio}
 
-
-	\include{report/appendix}
-
-
+  \include{report/appendix}
 \end{document}
