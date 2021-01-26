@@ -29,7 +29,7 @@ jobs:
       - name: Prepare Paper for Publishing
         run: |
           mkdir -p gh-pages
-          mv *.pdf gh-pages/
+          mv project/tex/*.pdf gh-pages/
       - name: Publish Paper
         if: github.ref == 'refs/heads/main'
         uses: JamesIves/github-pages-deploy-action@releases/v3

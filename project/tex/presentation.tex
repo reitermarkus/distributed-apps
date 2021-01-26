@@ -1,0 +1,223 @@
+%% Begin slides template file
+\documentclass[11pt,t,usepdftitle=false,aspectratio=169]{beamer}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{hyperref}
+\usepackage[export]{adjustbox}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+%% ------------------------------------------------------------------
+%% - aspectratio=43: Set paper aspect ratio to 4:3.
+%% - aspectratio=169: Set paper aspect ratio to 16:9.
+%% ------------------------------------------------------------------
+
+\usetheme[nototalframenumber,foot,logo]{uibk}
+\setbeamertemplate{bibliography item}[text]
+
+%% ------------------------------------------------------------------
+%% - foot: Add a footer line for conference name and date.
+%% - logo: Add the university logo in the footer (only if 'foot' set).
+%% - bigfoot/sasquatch: Larger font size in footer.
+%% - nototalslidenumber: Hide the total number of slides (only if 'foot' set)
+%% - license: Add CC-BY license symbol to title slide (e.g., for conference uploads)
+%% - licenseall: Add CC-BY license symbol to all subsequent slides slides
+%% - url: use \url{} rather than \href{} on the title page
+%% ------------------------------------------------------------------
+
+%% ------------------------------------------------------------------
+%% The official corporate colors of the university are predefined and
+%% can be used for e.g., highlighting something. Simply use
+%% \color{uibkorange} or \begin{color}{uibkorange} ... \end{color}
+%% Defined colors are:
+%% - uibkblue, uibkbluel, uibkorange, uibkorangel, uibkgray, uibkgraym, uibkgrayl
+%% The frametitle color can be easily adjusted e.g., to black with
+%% \setbeamercolor{titlelike}{fg=black}
+%% ------------------------------------------------------------------
+
+%\setbeamercolor{verbcolor}{fg=uibkorange}
+%% ------------------------------------------------------------------
+%% Setting a highlight color for verbatim output such as from
+%% the commands \pkg, \email, \file, \dataset
+%% ------------------------------------------------------------------
+
+
+%% information for the title page ('short title' is the pdf-title that is shown in viewer's titlebar)
+\title[Distributed Applications - Project Presentation]{Distributed Applications - Project Presentation}
+\subtitle{Project N  - Title, 28.01.2020}
+%%\URL{www.uibk.ac.at/statistics}
+
+\author[Author 1 \& Author 2]{Author 1 \& Author 2}
+%('short author' is the pdf-metadata Author)
+%% If multiple authors are required and the font size is too large you
+%% can overrule the font size of author and url by calling:
+%\setbeamerfont{author}{size*={10pt}{10pt},series=\mdseries}
+%\setbeamerfont{url}{size*={10pt}{10pt},series=\mdseries}
+%\URL{}
+%\subtitle{}
+
+\footertext{Distributed Applications - Project Presentation Template - Team M}
+%\date{2019-05-07}
+
+\headerimage{4}
+%% ------------------------------------------------------------------
+%% The theme offers four different header images based on the
+%% corporate design of the university of innsbruck. Currently
+%% 1, 2, 3 and 4 is allowed as input to \headerimage{...}. Default
+%% or fallback is '1'.
+%% ------------------------------------------------------------------
+
+\begin{document}
+
+%% ALTERNATIVE TITLEPAGE
+%% The next block is how you add a titlepage with the 'nosectiontitlepage' option, which switches off
+%% the default behavior of creating a titlepage every time a \section{} is defined.
+%% Then you can use \section{} as it's originally intended, including a table of contents.
+% \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{titlebackground.pdf}}
+% \begin{frame}[plain]
+%     \titlepage
+% \end{frame}
+% \addtocounter{framenumber}{-1}
+% \usebackgroundtemplate{}}
+
+%% Table of Contents, if wanted:
+%% this requires the 'nosectiontitlepage' option and setting \section{}'s as you want them to appear here.
+%% Subsections and subordinates are suppressed in the .sty at the moment, search
+%% for \setbeamertemplate{subsection} and replace the empty {} with whatever you want.
+%% Although it's probably too much for a presentation, maybe for a lecture.
+% \begin{frame}
+%     \vspace*{1cm plus 1fil}
+%     \tableofcontents
+%     \vspace*{0cm plus 1fil}
+% \end{frame}
+
+
+%% this sets the first PDF bookmark and triggers generation of the title page
+\section{Bookmark Title}
+
+\begin{frame}
+\frametitle{Project Report}
+    Team Members
+    \begin{itemize}
+        \item Author 1
+        \item Author 2
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Introduction}
+    \begin{itemize}
+        \item Project number
+        \item Programming language
+        \item Problem motivation
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Wokflow Structure (AFCL)}
+    \begin{itemize}
+        \item Screenshot from FC Editor
+        \item Data inputs
+        \item Data outputs
+        \item Functions
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Scheduler to CFCL}
+    \begin{itemize}
+        \item Scheduler algorithm and implementation
+        \item Screenshot from FC Editor
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Helper (automation) tools (developed by you)}
+    \begin{itemize}
+        \item If you developed additional tools or used existing to automate, show them on this slide
+        \item Mark maybe with different color in which parts is the automation
+    \end{itemize}
+    \vspace{1cm}
+    // check graphic from PPT template
+\end{frame}
+
+\begin{frame}
+\frametitle{Main Challenges}
+    \begin{itemize}
+        \item Emphasize the main problem(s) you faced
+        \item How did you handle the problem(s)
+        \item Other relevant challenges
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Demo}
+    \begin{itemize}
+        \item Present that your FC works
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Testing Methodology}
+    \begin{itemize}
+        \item Experiment setup
+        \item If you made some changes, justify them here
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Evaluation}
+    \begin{itemize}
+        \item Present the speedup of distributed vs. sequential
+        \item Explain whether the speedup / slowdown is expected / unexpected
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Recommendation}
+\end{frame}
+
+
+%% to show a last slide similar to the title slide: information for the last page
+%%\title{Thank you for your attention!}
+%%\subtitle{}
+%%\section{Thanks}
+
+
+%% appendix of 'extra' slides
+%%\appendix
+\begingroup
+
+{\footnotesize
+\begin{frame}
+	\frametitle{References}
+	\begin{minipage}[t]{1\textwidth}
+
+      \begin{thebibliography}{9}
+
+        \bibliofont
+
+        \bibitem{afcl}
+		Ristov, S., Pedratscher, S. and Fahringer, T.
+		\textbf{AFCL: An Abstract Function Choreography Language for serverless workflow specification.}
+		\textit{Future Generation Computer Systems vol. 114, p. 368--382}, 2020.
+
+	  \end{thebibliography}
+      \vspace{1cm}
+   \end{minipage}
+\end{frame}
+}
+
+%% Additional slides
+\begin{frame}
+    \frametitle{Appendix}
+
+\end{frame}
+\endgroup
+
+\end{document}

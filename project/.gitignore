@@ -10,3 +10,16 @@ files
 
 .env
 ibmcloud_api_key.txt
+
+*.out
+*.nav
+*.toc
+*.xdv
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.aux
+*.snm
+*.pdf
+!uibk_logo_4c_cmyk.pdf
