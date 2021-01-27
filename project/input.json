@@ -1,4 +1,4 @@
 {
-  "symbols": ["IBM"],
-  "symbol_count": 1
+  "symbols": ["IBM", "AAPL", "MSFT"],
+  "symbol_count": 3
 }

@@ -216,31 +216,35 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Demo}
+\begin{frame}[fragile]{Demo}
     \begin{itemize}
-        \item Present that your FC works
+      \item \texttt{input.json}:
+        \begin{lstlisting}
+{
+  "symbols": ["IBM", "AAPL", "MSFT"],
+  "symbol_count": 3
+}
+        \end{lstlisting}
+
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Testing Methodology}
+\begin{frame}{Testing Methodology}
     \begin{itemize}
         \item Experiment setup
         \item If you made some changes, justify them here
     \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Evaluation}
-    \begin{itemize}
-        \item Present the speedup of distributed vs. sequential
-        \item Explain whether the speedup / slowdown is expected / unexpected
-    \end{itemize}
+\begin{frame}{Evaluation}
+  \begin{itemize}
+      \item Present the speedup of distributed vs. sequential
+      \item Explain whether the speedup / slowdown is expected / unexpected
+  \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Recommendation}
+\begin{frame}{Recommendation}
+  Do not use AWS Forecast in a serverless environment.
 \end{frame}
 
 
