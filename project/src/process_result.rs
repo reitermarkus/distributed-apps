@@ -35,7 +35,7 @@ async fn process_result(params: Value) -> Result<Output> {
     for d in obj.remove("p90").unwrap().into_iter() {
       let symbol = input.symbols[i].to_owned();
       let timestamp = d.timestamp.unwrap();
-      let value = d.value.unwrap();
+      let value = (d.value.unwrap() * 100.0).round() / 100.0;
 
       if let Some(x) = timestamps.get_mut(&timestamp) {
         x.insert(symbol, value);
