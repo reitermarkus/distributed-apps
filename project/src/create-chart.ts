@@ -16,6 +16,16 @@ export async function main(input: Input): Promise<Output> {
       chart: {
         type: 'bar',
         data: input,
+        options: {
+          plugins: {
+            datalabels: {
+              display: true,
+              align: 'top',
+              backgroundColor: '#ccc',
+              borderRadius: 3,
+            },
+          },
+        },
       },
     }),
   })
