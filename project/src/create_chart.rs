@@ -18,7 +18,17 @@ async fn create_chart(params: Value) -> Result<Output> {
     "chart": {
       "type": "bar",
       "data": input,
-    }
+      "options": {
+        "plugins": {
+          "datalabels": {
+            "display": true,
+            "align": "top",
+            "backgroundColor": "#ccc",
+            "borderRadius": 3,
+          },
+        },
+      },
+    },
   });
 
   let client = Client::new();
