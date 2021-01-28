@@ -31,8 +31,8 @@ async fn process_result(params: Value) -> Result<Output> {
 
   let mut timestamps: BTreeMap<String, HashMap<String, f64>> = BTreeMap::new();
 
-  for mut obj in objects.into_iter() {
-    for (i, d) in obj.remove("p90").unwrap().into_iter().enumerate() {
+  for (i, mut obj) in objects.into_iter().enumerate() {
+    for d in obj.remove("p90").unwrap().into_iter() {
       let symbol = input.symbols[i].to_owned();
       let timestamp = d.timestamp.unwrap();
       let value = d.value.unwrap();
