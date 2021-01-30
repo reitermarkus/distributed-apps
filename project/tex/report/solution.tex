@@ -96,9 +96,10 @@ functions were chosen for the first \texttt{parallelFor}. For the second \texttt
 %
 \section{Automatic Deployment}
 
-\textcolor{magenta}{one paragraph}
-
-Describe specifics of your deployment script (which tool, which services do you deploy automatically, etc)
+For deployment, we used Terraform. We use it to deploy 8 functions to IBM cloud and
+to create a bucket for use with AWS Forecast. Additionally, we created two Bash scripts
+for compiling and packaging our Rust and TypeScript functions. We also use it to create
+a \texttt{.env} which contains secrets and is used when compiling the functions.
 
 
 
