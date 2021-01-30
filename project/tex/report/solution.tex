@@ -8,6 +8,15 @@
 %
 \section{FC Implementation in AFCL}
 
+
+\begin{figure}
+  \centering
+  \includegraphics[height=12cm, keepaspectratio]{./assets/afcl}
+  \caption{AFCL}
+  \label{fig:afcl}
+\end{figure}
+
+
 Describe your FC (AFCL):
 \begin{itemize}
     \item present a figure of your AFCL (you can use FC Editor)
@@ -21,7 +30,7 @@ Describe your FC (AFCL):
     \item explain compound functions
 \end{itemize}
 
-Discuss the FC complexity and the opportunities for distribution. 
+Discuss the FC complexity and the opportunities for distribution.
 
 
 
@@ -30,12 +39,32 @@ Discuss the FC complexity and the opportunities for distribution.
 %
 \section{Scheduler}
 
-Briefly describe how your scheduler works:
+Our scheduler receives a AFCL YAML file as its input and in addition, the number of iterations and the concurrency limit.
+As output, we directly create a YAML file as well.
+
+For the implementation of our scheduler, we chose Rust. We created structs representing all the parts of the YAML and
+used the \texttt{serde} library to serialise and deserialise them.
+
+This way we can parse a full AFCL YAML file as input. Our program them loops through the \texttt{workflowBody} and
+for each \texttt{parallelFor}, it applies the following algorithm:
+
 \begin{itemize}
-    \item inputs
-    \item algorithm
-    \item outputs
+  \item Inputs: \texttt{iterations} and \texttt{concurrency\_limit}
+  \item Variables: \texttt{concurrency\_limits} (\texttt{Map<String, usize>}), \\ \texttt{function\_iterations} (\texttt{Map<String, usize>}) and \\ \texttt{est} (\texttt{Map<String, (f64, f64)>})
+  \item For \texttt{i} in \texttt{0...iterations}, loop through functions in \texttt{parallelFor} block:
+    \begin{enumerate}
+      \item Look up FDs in database and insert function names in all maps if not already contained
+      \item Sort FDs by the start time stored in \texttt{est} and loop through them:
+        \begin{enumerate}
+          \item If FD has not yet reached the \texttt{concurrency\_limit} in \texttt{concurrency\_limits}, select it and update \texttt{concurrency\_limits}.
+          \item Otherwise, reset the limit and increase the start time in \texttt{est}.
+        \end{enumerate}
+  \end{enumerate}
 \end{itemize}
+
+After running the algorithm, we know how to split a \texttt{parallelFor} into multiple \texttt{parallelFor}s and
+create a new struct containing a \texttt{parallel} block with nested \texttt{parallelFor} blocks. The result is a
+CFCL using the same structure, which means we can easily output it directly in YAML format.
 
 
 
@@ -44,14 +73,21 @@ Briefly describe how your scheduler works:
 %
 \section{FC Implementation in CFCL}
 
-Describe your resulting FC (CFCL):
-\begin{itemize}
-    \item present a figure of your CFCL representation (you can use FC Editor)
-    \item briefly describe changes from AFCL to CFCL
-    \item describe which function deployments were selected by the scheduler
-\end{itemize}
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=12cm, keepaspectratio]{./assets/cfcl}
+  \caption{CFCL}
+  \label{fig:cfcl}
+\end{figure}
 
-Discuss the CFCL complexity and expected theoretical speedup.
+As can be seen in \cref{fig:cfcl}, the single \texttt{parallelFor} from \cref{fig:afcl} has
+been changed to a \texttt{parallel} section with two \texttt{parallelFor}s.
+
+With 20 iterations and a concurrency limit of 2, 12 iterations of the \texttt{fetch\_prices\_js} and \texttt{forecast\_js}
+functions were chosen for the first \texttt{parallelFor}. For the second \texttt{parallelFor},
+8 iterations of the \texttt{fetch\_prices\_rs} and \texttt{forecast\_rs} functions were chosen.
+
+% TODO: Discuss the CFCL complexity and expected theoretical speedup.
 
 
 
