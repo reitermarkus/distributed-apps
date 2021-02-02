@@ -3,9 +3,10 @@
 set -euo pipefail
 
 name="${1}"
-namespace="${2}"
-archive="${3}"
+region="${2}"
+namespace="${3}"
+archive="${4}"
 
-ibmcloud login -r us-east -g Default --apikey @ibmcloud_api_key.txt
+ibmcloud login -r "${region}" -g Default --apikey @ibmcloud_api_key.txt
 ibmcloud fn namespace target "${namespace}"
 ibmcloud fn action update "${name}" --timeout 600000 --memory 128 --web true --native "${archive}"

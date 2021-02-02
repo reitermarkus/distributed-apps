@@ -4,6 +4,7 @@ variable "aws_session_token" {}
 variable "aws_forecast_role" {}
 variable "ibmcloud_api_key" {}
 variable "ibmcloud_washington_namespace" {}
+variable "ibmcloud_washington_region" {}
 variable "alphavantage_api_key" {}
 variable "ibm_object_storage_endpoint_url" {}
 variable "ibm_object_storage_api_key" {}
@@ -34,7 +35,7 @@ provider "aws" {
 
 provider "ibm" {
   ibmcloud_api_key = var.ibmcloud_api_key
-  region           = "us-east"
+  region           = var.ibmcloud_washington_region
 }
 
 resource "aws_s3_bucket" "stock_forecast_data" {
@@ -82,7 +83,7 @@ resource "null_resource" "fetch_prices_rs" {
   }
 
   provisioner "local-exec" {
-    command = "'${path.module}/deploy_rust_function.sh' fetch_prices_rs '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.fetch_prices}'"
+    command = "'${path.module}/deploy_rust_function.sh' fetch_prices_rs '${var.ibmcloud_washington_region}' '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.fetch_prices}'"
   }
 }
 
@@ -95,7 +96,7 @@ resource "null_resource" "forecast_rs" {
   }
 
   provisioner "local-exec" {
-    command = "'${path.module}/deploy_rust_function.sh' forecast_rs '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.forecast}'"
+    command = "'${path.module}/deploy_rust_function.sh' forecast_rs '${var.ibmcloud_washington_region}' '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.forecast}'"
   }
 }
 
@@ -108,7 +109,7 @@ resource "null_resource" "process_result_rs" {
   }
 
   provisioner "local-exec" {
-    command = "'${path.module}/deploy_rust_function.sh' process_result_rs '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.process_result}'"
+    command = "'${path.module}/deploy_rust_function.sh' process_result_rs '${var.ibmcloud_washington_region}' '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.process_result}'"
   }
 }
 
@@ -121,7 +122,7 @@ resource "null_resource" "create_chart_rs" {
   }
 
   provisioner "local-exec" {
-    command = "'${path.module}/deploy_rust_function.sh' create_chart_rs '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.create_chart}'"
+    command = "'${path.module}/deploy_rust_function.sh' create_chart_rs '${var.ibmcloud_washington_region}' '${var.ibmcloud_washington_namespace}' '${data.external.rust_functions.result.create_chart}'"
   }
 }
 
