@@ -1,42 +1,48 @@
-\chapter{\label{chap:conclusion}Conclusion (and future work)}
+\chapter{\label{chap:conclusion}Conclusion \& Future Work}
 
-\textcolor{magenta}{Tentative conclusion length: between a half and one page.}
+In this project, we built a serverless system to predict the stock prices for the next day using historical data. Multiple stock ticker symbols are passed as input and as output, a graph is generated showing the predicted prices. This simplifies and automates multiple tasks that would have to be done manually for each stock.
 
-
-Summarize what you did within the project in one paragraph - e.g., the purpose of the system you built, as well as the main improvements it offers.
-
-\vspace{20 pt}
-State your contributions. Use the numbers from the experimental evaluation to provide evidence of the improvement resulting from your work.
+% TODO: State your contributions. Use the numbers from the experimental evaluation to provide evidence of the improvement resulting from your work.
 
 
 
 %
 %
 %
-\section{Future work} 
+\section{Future Work}
 
-Discuss (one paragraph) possible steps which could be taken to achieve further improvement.
+Future work on this project would definitely include finding an alternative solution to
+AWS Forecast which does not require such an elaborate setup for predicting prices.
+Due to the complicated API we only became aware of this issue after we had already
+implemented the bulk of the forecast function in both Rust and JavaScript, which is why
+we did not have time to find another forecasting solution which works in both languages.
 
 
 
 %
 %
 %
-\section{Recommendations for the VU in the future}
+\section{Recommendations for the VU in the Future}
 
 I kindly ask you for a feedback regarding:
 \begin{itemize}
-    \item the homeworks (interesting, challenging, easy, ...)
-    
-    \item the project (interesting, challenging, easy, ...)
-    
-    \item would you like to focus on multiple FaaS systems from the beginning with multiple cloud services (e.g., IBM Watson, or Google AI, ...)?
-    
-    \item Is the depth of the selected topics appropriate?
+    \item The homeworks were fairly straight-forward to solve, however sometimes quite time-consuming.
 
-    \item Are the selected topics appropriate?
-        
-    \item What would you like to learn more?
-    
-    \item What would you like to be removed from the course?
+    \item The project was quite interesting and also fairly straight-forward to implement,
+          however using AWS Forecast and two languages took a lot more time than anticipated.
+
+    \item Would you like to focus on multiple FaaS systems from the beginning with multiple cloud services (e.g. IBM Watson, Google AI, …)? \\
+          No, the platform is not that important, so a single one is fine.
+
+    \item Is the depth of the selected topics appropriate? \\
+          Yes.
+
+    \item Are the selected topics appropriate? \\
+          Yes.
+
+    \item What would you like to learn more? \\
+          Kubernetes
+
+    \item What would you like to be removed from the course? \\
+          Java
 \end{itemize}
