@@ -32,6 +32,13 @@ into CSV. In the Rust function, this is done in-memory, while the JavaScript fun
 saves the CSV to a file before uploading, which might explain why the Rust version
 is faster in this case.
 
+Another remark here has to be made to clarify that the numbers in \cref{tab:benchmark}
+are for cached results, meaning the forecast function was run previously
+and the forecast does not have to be done from scratch. Creating a forecast from
+scratch can take from 45 minutes to 1 hour and 30 minutes. This means that first of all,
+the deployed function will time out in any case since the maximum runtime of a function
+on IBM Cloud is 10 minutes, and secondly, the difference between forecast runs can be up
+to 45 minutes, which makes benchmarking them meaningless.
 
 \textcolor{magenta}{Tentative evaluation length: between two and three pages.}
 
