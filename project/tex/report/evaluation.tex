@@ -17,7 +17,7 @@ The results are shown in \cref{tab:benchmark}.
   \centering
   \begin{tabular}{|l|l|l|l|}
     \hline
-    Function          & Region     & Langauge   & Time (ms) \\ \hline
+    Function          & Region     & Language   & Time (ms) \\ \hline
     \texttt{fetch\_prices}   & Washington & Rust       & 2811      \\ \hline
     \texttt{fetch\_prices}   & Washington & JavaScript & 1790      \\ \hline
     \texttt{forecast}        & Washington & Rust       & 2995      \\ \hline
@@ -26,28 +26,35 @@ The results are shown in \cref{tab:benchmark}.
     \texttt{process\_result} & Washington & JavaScript & 808       \\ \hline
     \texttt{create\_chart}   & Washington & Rust       & 806       \\ \hline
     \texttt{create\_chart}   & Washington & JavaScript & 817       \\ \hline
-    \texttt{fetch\_prices}   & Frankfurt & Rust       & 2065       \\ \hline
-    \texttt{fetch\_prices}   & Frankfurt & JavaScript & 1479       \\ \hline
-    \texttt{forecast}        & Frankfurt & Rust       & 3526       \\ \hline
-    \texttt{forecast}        & Frankfurt & JavaScript & 10802      \\ \hline
-    \texttt{process\_result} & Frankfurt & Rust       & 359        \\ \hline
-    \texttt{process\_result} & Frankfurt & JavaScript & 381        \\ \hline
-    \texttt{create\_chart}   & Frankfurt & Rust       & 448        \\ \hline
-    \texttt{create\_chart}   & Frankfurt & JavaScript & 456        \\ \hline
-    \texttt{fetch\_prices}   & Tokyo     & Rust       & 7167       \\ \hline
-    \texttt{fetch\_prices}   & Tokyo     & JavaScript & 4353       \\ \hline
-    \texttt{forecast}        & Tokyo     & Rust       & 10627      \\ \hline
-    \texttt{forecast}        & Tokyo     & JavaScript & 15884      \\ \hline
-    \texttt{process\_result} & Tokyo     & Rust       & 2470       \\ \hline
-    \texttt{process\_result} & Tokyo     & JavaScript & 2271       \\ \hline
-    \texttt{create\_chart}   & Tokyo     & Rust       & 2509       \\ \hline
-    \texttt{create\_chart}   & Tokyo     & JavaScript & 2266       \\ \hline
+    \texttt{fetch\_prices}   & Frankfurt  & Rust       & 2065       \\ \hline
+    \texttt{fetch\_prices}   & Frankfurt  & JavaScript & 1479       \\ \hline
+    \texttt{forecast}        & Frankfurt  & Rust       & 3526       \\ \hline
+    \texttt{forecast}        & Frankfurt  & JavaScript & 10802      \\ \hline
+    \texttt{process\_result} & Frankfurt  & Rust       & 359        \\ \hline
+    \texttt{process\_result} & Frankfurt  & JavaScript & 381        \\ \hline
+    \texttt{create\_chart}   & Frankfurt  & Rust       & 448        \\ \hline
+    \texttt{create\_chart}   & Frankfurt  & JavaScript & 456        \\ \hline
+    \texttt{fetch\_prices}   & Tokyo      & Rust       & 7167       \\ \hline
+    \texttt{fetch\_prices}   & Tokyo      & JavaScript & 4353       \\ \hline
+    \texttt{forecast}        & Tokyo      & Rust       & 10627      \\ \hline
+    \texttt{forecast}        & Tokyo      & JavaScript & 15884      \\ \hline
+    \texttt{process\_result} & Tokyo      & Rust       & 2470       \\ \hline
+    \texttt{process\_result} & Tokyo      & JavaScript & 2271       \\ \hline
+    \texttt{create\_chart}   & Tokyo      & Rust       & 2509       \\ \hline
+    \texttt{create\_chart}   & Tokyo      & JavaScript & 2266       \\ \hline
   \end{tabular}
   \caption{Benchmark Results}
   \label{tab:benchmark}
 \end{table}
 
-As can be seen in \cref{tab:benchmark}, for most function deployments,
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth, keepaspectratio]{./assets/evaluation-language}
+  \caption{Median Time spent per Language}
+  \label{fig:time_per_language}
+\end{figure}
+
+As can be seen in \cref{fig:time_per_language}, for most function deployments,
 the JavaScript version is faster or minimally slower than the Rust version.
 In the cases where JavaScript is faster, the functions are really light-weight and
 mostly only consist of a couple API calls and some basic logic in-between. We assume
@@ -67,6 +74,14 @@ the deployed function will time out in any case since the maximum runtime of a f
 on IBM Cloud is 10 minutes, and secondly, the difference between \texttt{forecast} runs can be up
 to 45 minutes, which makes benchmarking them meaningless.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth, keepaspectratio]{./assets/evaluation-region}
+  \caption{Median Time spent per Region}
+  \label{fig:time_per_region}
+\end{figure}
+
+In \cref{fig:time_per_region}, we see the median time across all functions in a region.
 The difference between regions is expected. The benchmark was conducted from Austria,
 so it was expected that the Frankfurt region would yield the fastest times. The only outlier
 seems to be the JavaScript version of the \texttt{forecast} function in Frankfurt, which
