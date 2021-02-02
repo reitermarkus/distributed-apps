@@ -1,34 +1,59 @@
 \chapter{\label{chap:evaluation}Evaluation}
 
-For our evaluation, we deployed our functions on IBM Cloud in the Washington region.
-For each function, we tested both the Rust as well as the JavaScript version.
+For our evaluation, we deployed our functions on IBM Cloud in the Washington,
+Tokyo and Frankfurt regions. For each function, we tested both the Rust as
+well as the JavaScript version.
+
+For benchmarking, we executed the AFCL using the enactment engine and with a
+single stock ticker symbol as input. For each region and each programming
+language, we repeated the measurement 10 times and took the minimum time.
+The results are shown in \cref{tab:benchmark}.
 
 \begin{table}[h]
   \centering
   \begin{tabular}{|l|l|l|l|}
     \hline
     Function          & Region     & Langauge   & Time (ms) \\ \hline
-    `fetch\_prices`   & Washington & Rust       & 3627      \\ \hline
-    `fetch\_prices`   & Washington & JavaScript & 2333      \\ \hline
-    `forecast`        & Washington & Rust       & 6689      \\ \hline
-    `forecast`        & Washington & JavaScript & 6982      \\ \hline
-    `process\_result` & Washington & Rust       & 2826      \\ \hline
-    `process\_result` & Washington & JavaScript & 1382      \\ \hline
-    `create\_chart`   & Washington & Rust       & 1396      \\ \hline
-    `create\_chart`   & Washington & JavaScript & 1301      \\ \hline
+    `fetch\_prices`   & Washington & Rust       & 2811      \\ \hline
+    `fetch\_prices`   & Washington & JavaScript & 1790      \\ \hline
+    `forecast`        & Washington & Rust       & 2995      \\ \hline
+    `forecast`        & Washington & JavaScript & 8305      \\ \hline
+    `process\_result` & Washington & Rust       & 1017      \\ \hline
+    `process\_result` & Washington & JavaScript & 808       \\ \hline
+    `create\_chart`   & Washington & Rust       & 806       \\ \hline
+    `create\_chart`   & Washington & JavaScript & 817       \\ \hline
+
+    `fetch\_prices`   & Frankfurt & Rust       & 2065       \\ \hline
+    `fetch\_prices`   & Frankfurt & JavaScript & 1479       \\ \hline
+    `forecast`        & Frankfurt & Rust       & 3526       \\ \hline
+    `forecast`        & Frankfurt & JavaScript & 10802      \\ \hline
+    `process\_result` & Frankfurt & Rust       & 359        \\ \hline
+    `process\_result` & Frankfurt & JavaScript & 381        \\ \hline
+    `create\_chart`   & Frankfurt & Rust       & 448        \\ \hline
+    `create\_chart`   & Frankfurt & JavaScript & 456        \\ \hline
+
+    `fetch\_prices`   & Tokyo     & Rust       & 7167       \\ \hline
+    `fetch\_prices`   & Tokyo     & JavaScript & 4353       \\ \hline
+    `forecast`        & Tokyo     & Rust       & 10627      \\ \hline
+    `forecast`        & Tokyo     & JavaScript & 15884      \\ \hline
+    `process\_result` & Tokyo     & Rust       & 2470       \\ \hline
+    `process\_result` & Tokyo     & JavaScript & 2271       \\ \hline
+    `create\_chart`   & Tokyo     & Rust       & 2509       \\ \hline
+    `create\_chart`   & Tokyo     & JavaScript & 2266       \\ \hline
   \end{tabular}
   \caption{Benchmark Results}
   \label{tab:benchmark}
 \end{table}
 
-As can be seen in \cref{tab:benchmark}, in almost all cases the JavaScript version is faster.
+As can be seen in \cref{tab:benchmark}, for most function deployments,
+the JavaScript version is faster or minimally slower than the Rust version.
 In the cases where JavaScript is faster, the functions are really light-weight and
 mostly only consist of a couple API calls and some basic logic in-between. We assume
 that there exists a steady supply of JavaScript containers which are already
-running while Rust containers have to wait for a bare container to start.
-When we look at the forecast function, however, we see that the Rust version is actually faster.
-This function makes quite a few API calls and additionally transforms a JSON document
-into CSV. In the Rust function, this is done in-memory, while the JavaScript function
+running while Rust containers have to be started first. When we look at the forecast
+function, however, we see that the Rust version is considerably faster. This function
+makes quite a few API calls and additionally transforms a JSON document into CSV. In
+the Rust function, this is done in-memory, while the JavaScript function
 saves the CSV to a file before uploading, which might explain why the Rust version
 is faster in this case.
 
