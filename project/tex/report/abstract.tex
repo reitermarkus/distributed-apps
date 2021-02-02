@@ -1,5 +1,34 @@
 \noindent
 
+Serverless Computing has seen immense groth in the past couple of years and saw
+many usefull applications. Its intuative design philosophy opens many
+opportunities for developers to build and deploy scalable applications that can
+run on any device, which is especially important in the current climate where
+mobile and IoT devices dominate the market. While serverless computing has it's
+benefits it certainly also has it's drawbacks depending on the use case.
+Fortunatelly, we will see both, which makes for a better evaluation of the
+paradigm.
+
+In this report we test the use of serverless computing for stock price
+prediction. For this we have created a FC with 4 functions, to first fetch the
+prices, followed by a functions who predicts the stock price according to the
+fetched prices, proceeded then by function, which processes the results and
+finally a function, that creates a chart with quickdraw.io. The functions
+itself are written in two languages each, Rust and NodeJS with TypeScript for
+the type checking. The reason for choosing the former is because of it's unique
+ownership models, that allows for writing performant and save code, which is
+especially important with serverless computing. Choosing the latter of the two
+programming language is because of it beeing the prime language for FaaS
+programming with its great integration in basically every cloud.
+
+Once the functions are ready, they are deployed on the IBM cloud. While the
+functions are deployed on IBM, there is still a dependency on AWS, since the
+function for predicting the stock price relies on it. This function is
+especially challenging to handle for serverless functions due to the forecast's
+long running time. The forecast function's main drawback shines a light on the
+main benefit of the FC, since the forecast runs in parallel for each stock,
+which mitigates the losses in time at some point.
+
 \textcolor{magenta}{Tentative abstract length: between a half and one page.}
 
 % remove vspace in your final version
@@ -7,7 +36,7 @@
 
 \\The abstract should provide a brief summary of the report. Please provide details on following topics:
 
-\\\\\textbf{Project}: 
+\\\\\textbf{Project}:
 Introduce and motivate the use case you addressed in the project.
 Please provide (a)~a brief description of the FC you were working with, (b)~information about the programming language use used to implement the functions, and (c)~a brief motivation for the deployment of the FC across multiple FaaS systems (regions).
 
