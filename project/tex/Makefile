@@ -9,7 +9,7 @@ presentation:
 
 .PHONY: report
 report:
-	tectonic --reruns 0 report.tex
+	tectonic --reruns 2 report.tex
 
 .PHONY: pdf
 pdf: presentation report

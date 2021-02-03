@@ -1,6 +1,19 @@
 \chapter{\label{chap:conclusion}Conclusion \& Future Work}
 
-In this project, we built a serverless system to predict the stock prices for the next day using historical data. Multiple stock ticker symbols are passed as input and as output, a graph is generated showing the predicted prices. This simplifies and automates multiple tasks that would have to be done manually for each stock.
+In this project, we built a serverless system to predict the stock prices for
+the next day using historical data. Multiple stock ticker symbols are passed as
+input and as output, a graph is generated showing the predicted prices. This
+simplifies and automates multiple tasks that would have to be done manually for
+each stock. During the development and eveloation of the FC it was clear that
+serverless computing is not suitable for each function in the FC. The forecast
+function was particularly problematic as it's task was longer than the
+permitted runtime per function. Overall it can be said, that while the setup as
+is can work a better solution would be to run at least the forecast function on
+a VM. The development itself was not always straight forward as there were some
+issues with APIs regarding keys and usage as well as deployment. The
+development was split evenly among the team members, where each member worked
+on two Rust and two TypeScript functions and the deployment process was
+automated together by both members.
 
 % TODO: State your contributions. Use the numbers from the experimental evaluation to provide evidence of the improvement resulting from your work.
 
@@ -11,11 +24,12 @@ In this project, we built a serverless system to predict the stock prices for th
 %
 \section{Future Work}
 
-Future work on this project would definitely include finding an alternative solution to
-AWS Forecast which does not require such an elaborate setup for predicting prices.
-Due to the complicated API we only became aware of this issue after we had already
-implemented the bulk of the forecast function in both Rust and JavaScript, which is why
-we did not have time to find another forecasting solution which works in both languages.
+Future work on this project would definitely include finding an alternative
+solution to AWS Forecast which does not require such an elaborate setup for
+predicting prices.  Due to the complicated API we only became aware of this
+issue after we had already implemented the bulk of the forecast function in
+both Rust and JavaScript, which is why we did not have time to find another
+forecasting solution which works in both languages.
 
 
 
