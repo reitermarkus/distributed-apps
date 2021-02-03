@@ -17,13 +17,16 @@ jobs:
             --encoding UTF-8
             --lang en_GB
             --mode tex
-            --personal ./aspell.en_GB.pws
+            --personal ./project/tex/aspell.en_GB.pws
             --add-tex-command PassOptionsToPackage\ pp
             --add-tex-command texttt\ op
+            --add-tex-command lstinline\ op
             --add-tex-command cite\ op
             --add-tex-command usefonttheme\ op
             --add-tex-command subfile\ op
             --add-tex-command tabular\ op
+            --add-tex-command usetheme\ op
+            --add-tex-command cref\ op
       - name: Compile Paper
         uses: reitermarkus/latexmk@master
       - name: Prepare Paper for Publishing

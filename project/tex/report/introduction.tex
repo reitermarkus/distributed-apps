@@ -5,45 +5,45 @@
 
 Serverless Computing is a versatile paradigm with many use cases, which gained
 in popularity in the recent past.  Especially since the mobile revolution more
-and more opportunities open themself up for the usage of FaaS applicatins.  In
+and more opportunities open themselves up for the usage of FaaS applications.  In
 this project we investigated the feasability of using Serverless Computing for
 stock prediction. The stock marketing is interesting as it is to some extend
 unpredictable and therefore a little help for investing is welcome. For this
 reason the core of the project is to use AWS Forecast to predict future prices
-of stocks in order to give intevestors a better understanding of the possible
+of stocks in order to give investors a better understanding of the possible
 outcome.
 
 AWS Forecast uses machine learning to predict the prices therefore data is
 needed for it to function properly. To do so first some previous stock prices
-are required. Those can be acquired with the \textit{AlphaVantage API}.
+are required. Those can be acquired with the AlphaVantage API.
 AlphaVantage makes it easy to retrieve the daily time series over period of
-several months. This should provide \textit{Forecast} with enough data for an
+several months. This should provide AWS Forecast with enough data for an
 adequate prediction. After the prediction the results will be processed in
 order for them to be presented in a chart. More specifically for the chart a
-convenient service will be used, that makes that process easy and straight
-forward with the name \textit{quckchart.io}. It takes a \textit{JSON} in the
+convenient service with the name \texttt{quickchart.io} will be used that
+makes that process easy and straight forward. It takes a JSON in the
 body of the request and creates the chart accordingly. The following functions
 are the core components of the FC:
 
 \begin{itemize}
-  \item fetchPrices
-  \item forecast
-  \item processResults
-  \item createChart
+  \item \texttt{fetchPrices}
+  \item \texttt{forecast}
+  \item \texttt{processResults}
+  \item \texttt{createChart}
 \end{itemize}
 
-In our AFCL \textit{fetchPrices} followed by \textit{forecast} will be executed
+In our AFCL \texttt{fetchPrices} followed by \texttt{forecast} will be executed
 in parallel over all the processed stocks. The result of those will then be
-used by \textit{processResults} to create a chart. This increases the executed
+used by \texttt{processResults} to create a chart. This increases the executed
 time of the whole choreography considerably because the forecast function takes
 quite some time.
 
 All functions are deployed on the IBM cloud and are
-implemented in the \textit{Rust} programming language as well as in
-\textit{NodeJS} with \textit{TypeScript} as the type checker. This gives an
-interesting opportunity to compare both languages regarding their suatability
-for the task at hand. It also offers an insight on how each language handels
-serialization as well as interfering with all the required interfaces in order
+implemented in the Rust programming language as well as in
+NodeJS with TypeScript as the type checker. This gives an
+interesting opportunity to compare both languages regarding their suitability
+for the task at hand. It also offers an insight on how each language handles
+serialisation as well as interfering with all the required interfaces in order
 to get a final result.
 
 \textcolor{magenta}{Tentative introduction length: one page.}

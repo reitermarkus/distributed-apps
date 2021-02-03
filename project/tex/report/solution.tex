@@ -22,7 +22,7 @@ the ticker symbols and a \texttt{symbol\_count} number.
 
 The first two steps can be done in parallel: The \texttt{fetchProcess} function
 receives a single \texttt{symbol} and fetches the prices for this symbol by
-querying the Alphavantage API and stores the result in an IBM bucket. It then
+querying the AlphaVantage API and stores the result in an IBM bucket. It then
 passes the \texttt{symbol} to the output and also adds a \texttt{object\_key}
 to the output, which indicates the file name in the bucket.
 
@@ -120,16 +120,3 @@ to create a bucket for use with AWS Forecast. Additionally, we created two Bash 
 for compiling and packaging our Rust and TypeScript functions. We also use it to create
 a \texttt{.env} which contains secrets and is used when compiling the functions.
 
-
-
-%
-%
-%
-\section{Helper tools from you}
-
-Mention developed tools by you to help you to manage:
-\begin{itemize}
-    \item logs from \textit{xAFCL}
-    \item parse AFCL and create CFCL
-    \item parse AFCL and create CFCL
-\end{itemize}

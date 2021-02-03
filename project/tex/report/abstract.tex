@@ -1,24 +1,24 @@
 \noindent
 
-Serverless Computing has seen immense groth in the past couple of years and saw
-many usefull applications. Its intuative design philosophy opens many
+Serverless Computing has seen immense growth in the past couple of years and saw
+many useful applications. Its intuitive design philosophy opens many
 opportunities for developers to build and deploy scalable applications that can
 run on any device, which is especially important in the current climate where
 mobile and IoT devices dominate the market. While serverless computing has it's
 benefits it certainly also has it's drawbacks depending on the use case.
-Fortunatelly, we will see both, which makes for a better evaluation of the
+Fortunately, we will see both, which makes for a better evaluation of the
 paradigm.
 
 In this report we test the use of serverless computing for stock price
 prediction. For this we have created a FC with 4 functions, to first fetch the
 prices, followed by a functions who predicts the stock price according to the
 fetched prices, proceeded then by function, which processes the results and
-finally a function, that creates a chart with quickdraw.io. The functions
+finally a function, that creates a chart with \texttt{quickchart.io}. The functions
 itself are written in two languages each, Rust and NodeJS with TypeScript for
 the type checking. The reason for choosing the former is because of it's unique
 ownership models, that allows for writing performant and save code, which is
 especially important with serverless computing. Choosing the latter of the two
-programming language is because of it beeing the prime language for FaaS
+programming language is because of it being the prime language for FaaS
 programming with its great integration in basically every cloud.
 
 Once the functions are ready, they are deployed on the IBM cloud. While the

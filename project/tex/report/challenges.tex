@@ -1,7 +1,7 @@
 \chapter{\label{chap:challenges}Challenges}
 
 During the development of the projects some challenges arose. Deployment with
-TerraForm can be tricky since there as a 4MB limit for files which makes
+Terraform can be tricky since there as a 4MB limit for files which makes
 especially the deployment of Rust functions difficult because those are usually
 compiled as a single application that in many instance will shoot over the 4MB
 limit. The reason are the included libraries. An example would be a library for
@@ -10,10 +10,10 @@ is in this case only text, that will be uploaded. The JavaScript AWS API is
 quite large and cause problems during the upload to IBM therefore.
 
 While the deployment of the functions was only done on IBM, an AWS account was
-still required since the forecast functions relies on AWS forecast, which is
-obvously only available on AWS. For students AWS offers the AWS student
+still required since the forecast functions relies on AWS Forecast, which is
+obviously only available on AWS. For students, AWS offers the AWS Educate
 program, which lets students use their service for 3 hours per session. This
-can be a problem since unfortunatally those 3 hours are bound to a web page
+can be a problem since unfortunately those 3 hours are bound to a web page
 session.  The said web-page is unreliable to say the least and tends to crash
 quite frequently, which is especially troublesome during the run of the
 forecast function, which takes about 50 minutes to complete.

@@ -8,10 +8,6 @@
 \usepackage[export]{adjustbox}
 \usepackage{listings}
 
-\makeatletter
-\def\BState{\State\hskip-\ALG@thistlm}
-\makeatother
-
 %% ------------------------------------------------------------------
 %% - aspectratio=43: Set paper aspect ratio to 4:3.
 %% - aspectratio=169: Set paper aspect ratio to 16:9.
@@ -126,13 +122,13 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Wokflow Structure (AFCL)}
+  \frametitle{Workflow Structure (AFCL)}
   \begin{center}
     \includegraphics[height=6.7cm, keepaspectratio]{./assets/afcl}
   \end{center}
 \end{frame}
 
-\begin{frame}{Wokflow Structure (AFCL): Function Inputs/Outputs}
+\begin{frame}{Workflow Structure (AFCL): Function Inputs/Outputs}
   \begin{itemize}
     \item \texttt{fetch\_prices}:   \\
       \textleftarrow\ \lstinline{\{"symbol": "IBM"\}}                                  \\
@@ -143,7 +139,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Wokflow Structure (AFCL): Function Inputs/Outputs}
+\begin{frame}{Workflow Structure (AFCL): Function Inputs/Outputs}
   \begin{itemize}
     \item \texttt{process\_result}: \\
       \textleftarrow\ \lstinline{\{"symbols": ["IBM"], "object\_keys": ["IBM.forecast.json"]\}} \\
