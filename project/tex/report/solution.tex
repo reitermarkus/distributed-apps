@@ -1,7 +1,5 @@
 \chapter{\label{chap:solution}Solution}
 
-\textcolor{magenta}{Tentative solution length: between two to three pages, including the figures.}
-
 
 %
 %
@@ -23,38 +21,33 @@ As input, the FC receives two variables: A \texttt{symbols} array containing
 the ticker symbols and a \texttt{symbol\_count} number.
 
 The first two steps can be done in parallel: The \texttt{fetchProcess} function
-receives a single \texttt{symbol} and fetches the prices for this symbol. It
+receives a single \texttt{symbol} and fetches the prices for this symbol by
+querying the Alphavantage API and stores the result in an IBM bucket. It then
 passes the \texttt{symbol} to the output and also adds a \texttt{object\_key}
-to the output, which indicates the file name of the stored prices in a bucket.
+to the output, which indicates the file name in the bucket.
 
 The \texttt{forecast} function then receives that output as input and creates a
-forecast using AWS Forecast: The prices are converted from JSON into CSV format
+forecast using AWS Forecast: The prices are first converted from JSON into CSV format
 and stored on an AWS bucket which can be accessed by AWS Forecast. It then creates
 a dataset group, a dataset, a data import job, a predictor and finally a forecast.
-The last step is to create a query to retrieve the forecast data. The output of
-this function again contains the \texttt{symbol} as well as the forecast data
-as an array, in our case only containing a single element for the current day.
+The last step is to create a query to retrieve the forecast data. The result is
+stored in an IBM bucket. The output of this function again contains the \texttt{symbol}
+as well as the forecast data as an array, in our case only containing a single
+element for the current day.
 
 Once the \texttt{parallelFor} is finished, all \texttt{forecast} outputs are passed
-to the \texttt{processResult} function, which transforms the data into the following
-format for \texttt{quickchart.io}: A \texttt{labels} array, containing the data dates
-and a \texttt{datasets} array, which contains elements with a \texttt{symbol} and a
+to the \texttt{processResult} function, which first retrieves the given \texttt{object\_keys}
+from the IBM bucket and then transforms the data into the following format for
+\texttt{quickchart.io}: A \texttt{labels} array, containing the data dates and a
+\texttt{datasets} array, which contains elements with a \texttt{symbol} and a
 \texttt{data} array with the forecast prices.
 
-Describe your FC (AFCL):
-\begin{itemize}
-    \item present a figure of your AFCL (you can use FC Editor)
-    \item describe dataIns/outs inside the FC
-    \item describe FC functions (function types)
-    \begin{itemize}
-        \item dataIns
-        \item dataOuts
-        \item purpose within the overall FC
-    \end{itemize}
-    \item explain compound functions
-\end{itemize}
+Finally, the \texttt{create\_chart} function receives this output, makes an API
+call to \texttt{quickchart.io} and eventually returns a \texttt{url} as output.
 
-Discuss the FC complexity and the opportunities for distribution.
+Overall, the complexity of our FC is O(n), since the FC loops over all ticker symbols
+given as input. This means that the FC can be easily distributed by simply distributing
+the ticker symbols among different function deployments.
 
 
 
