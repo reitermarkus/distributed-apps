@@ -104,7 +104,9 @@ With 20 iterations and a concurrency limit of 2, 12 iterations of the \texttt{fe
 functions were chosen for the first \texttt{parallelFor}. For the second \texttt{parallelFor},
 8 iterations of the \texttt{fetch\_prices\_rs} and \texttt{forecast\_rs} functions were chosen.
 
-% TODO: Discuss the CFCL complexity and expected theoretical speedup.
+The complexity of the CFCL depends on the number of function deployments. With m different function deployments for each function, the CFCL
+complexity is roughly O(n / m). The theoretical speedup depends on the concurrency limit. With concurrency limit k, the theoretical speedup
+would be $((m * k) * t_{par} + t_{seq}) / t$.
 
 
 
